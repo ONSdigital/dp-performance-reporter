@@ -1,4 +1,4 @@
-package com.onsdigital.performance.reporter;
+package com.onsdigital.performance.reporter.interfaces;
 
 public interface FileUploader {
 

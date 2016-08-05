@@ -1,5 +1,10 @@
 package com.onsdigital.performance.reporter;
 
+import com.onsdigital.performance.reporter.influxdb.InfluxDbMetricsProvider;
+import com.onsdigital.performance.reporter.interfaces.FileUploader;
+import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
+import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
+import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.model.ResponseTimes;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
@@ -23,6 +28,10 @@ public class Main {
         log.debug("Uploading response times.");
         FileUploader fileUploader = new s3FileUploader();
         fileUploader.uploadJsonForObject(responseTimes, "responsetimes.json");
+
+        MetricsProvider metricsProvider = new InfluxDbMetricsProvider();
+        Metrics metrics = metricsProvider.getMetrics("aTimeSeries", "cpu");
+        fileUploader.uploadJsonForObject(metrics, "metrics.json");
 
         log.debug("Finished");
     }

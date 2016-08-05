@@ -13,7 +13,11 @@ public class Configuration {
     // Google analytics
 
     // Influx
+    private static String INFLUXDB_USERNAME_ENV = "influxdb_username";
+    private static String INFLUXDB_PASSWORD_ENV = "influxdb_password";
+    private static String INFLUXDB_URL_ENV = "influxdb_url";
 
+    private static String INFLUXDB_URL_DEFAULT = "http://localhost:8086";
 
     public static String getPingdomUsername() {
         return getValue(PINGDOM_USERNAME_ENV);
@@ -31,12 +35,31 @@ public class Configuration {
         return getValue(AWS_BUCKET_NAME);
     }
 
+    public static String getInfluxDbUsername() {
+        return getValue(INFLUXDB_USERNAME_ENV);
+    }
+
+    public static String getInfluxDbPassword() {
+        return getValue(INFLUXDB_PASSWORD_ENV);
+    }
+
+    public static String getInfluxdbUrl() {
+        return getValueOrDefault(INFLUXDB_URL_ENV, INFLUXDB_URL_DEFAULT);
+    }
+
+    static String getValueOrDefault(String key, String defaultValue) {
+        String value = getValue(key);
+        if (value == null || value.length() == 0)
+            value = defaultValue;
+
+        return value;
+    }
+
     static String getValue(String key) {
 
         String value = System.getProperty(key);
-        if (value == null || value.length() == 0) {
+        if (value == null || value.length() == 0)
             value = System.getenv(key);
-        }
 
         if (value == null || value.length() == 0)
             throw new RuntimeException("Could not find configuration value for " + key);

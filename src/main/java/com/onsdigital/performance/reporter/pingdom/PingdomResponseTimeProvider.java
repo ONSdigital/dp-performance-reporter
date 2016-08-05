@@ -1,7 +1,7 @@
 package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.ResponseTimeProvider;
+import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.ResponseTime;
 import com.onsdigital.performance.reporter.model.ResponseTimes;
 import com.onsdigital.performance.reporter.pingdom.model.Check;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
-    private static PingdomClient pingdomClient;
+    private PingdomClient pingdomClient;
 
     public PingdomResponseTimeProvider() {
 

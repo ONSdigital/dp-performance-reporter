@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.google.gson.Gson;
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.FileUploader;
+import com.onsdigital.performance.reporter.interfaces.FileUploader;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

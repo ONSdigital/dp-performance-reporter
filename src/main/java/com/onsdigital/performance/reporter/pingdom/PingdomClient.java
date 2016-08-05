@@ -21,8 +21,8 @@ public class PingdomClient {
     // base url of com.onsdigital.performance.reporter.pingdom
     public static final String API_BASE_URL = "https://api.pingdom.com/api/2.0/";
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    private static Retrofit.Builder builder = new Retrofit.Builder()
+    private OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create());
 
@@ -86,7 +86,7 @@ public class PingdomClient {
     }
     
     // added this to handle basic auth in service calls.
-    private static <S> S createService(Class<S> serviceClass, String username, String password) {
+    private <S> S createService(Class<S> serviceClass, String username, String password) {
         if (username != null && password != null) {
             String credentials = username + ":" + password;
             final String basic =

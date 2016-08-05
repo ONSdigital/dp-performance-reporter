@@ -1,4 +1,4 @@
-package com.onsdigital.performance.reporter;
+package com.onsdigital.performance.reporter.interfaces;
 
 import com.onsdigital.performance.reporter.model.ResponseTimes;
 
