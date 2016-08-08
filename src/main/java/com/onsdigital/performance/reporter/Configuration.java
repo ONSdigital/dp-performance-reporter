@@ -7,10 +7,11 @@ public class Configuration {
     private static String PINGDOM_PASSWORD_ENV = "pingdom_password";
     private static String PINGDOM_APPLICATION_KEY_ENV = "pingdom_application_key";
 
-    // AWS
+    // AWS - getting credentials from default ~/.aws/credentials location
     private static String AWS_BUCKET_NAME = "aws_bucket_name";
 
-    // Google analytics
+    // Google analytics - credentials JSON file read automatically by Google client library. Added here for completeness
+    private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS";
 
     // Influx
     private static String INFLUXDB_USERNAME_ENV = "influxdb_username";
