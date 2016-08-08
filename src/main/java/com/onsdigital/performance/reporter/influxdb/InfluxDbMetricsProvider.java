@@ -34,7 +34,6 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
      * @param metricName
      * @return
      */
-    @Override
     public Metrics getMetrics(String dbName, String metricName) {
 
         Metrics metrics = new Metrics();
