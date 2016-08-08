@@ -3,7 +3,6 @@ package com.onsdigital.performance.reporter.influxdb;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.Metric;
-import com.onsdigital.performance.reporter.model.MetricSeries;
 import com.onsdigital.performance.reporter.model.Metrics;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +29,7 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
 
     /**
      * Gather metrics for the given metric name from the given DB name.
+     *
      * @param dbName
      * @param metricName
      * @return
@@ -45,20 +45,16 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
 
         for (QueryResult.Result result : queryResult.getResults()) {
 
-            Metric metric = new Metric();
-
             for (QueryResult.Series series : result.getSeries()) {
 
-                MetricSeries metricSeries = new MetricSeries();
-                metricSeries.name = series.getName();
-                metricSeries.columns = series.getColumns();
-                metricSeries.values = series.getValues();
-                metricSeries.tags = series.getTags();
+                Metric metric = new Metric();
+                metric.name = series.getName();
+                metric.columns = series.getColumns();
+                metric.values = series.getValues();
+                metric.tags = series.getTags();
 
-                metric.add(metricSeries);
+                metrics.add(metric);
             }
-
-            metrics.add(metric);
         }
 
         return metrics;
