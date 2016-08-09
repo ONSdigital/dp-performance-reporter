@@ -41,11 +41,11 @@ public class Configuration {
     }
 
     public static String getInfluxDbUsername() {
-        return getValue(INFLUXDB_USERNAME_ENV);
+        return getValueOrDefault(INFLUXDB_USERNAME_ENV, "");
     }
 
     public static String getInfluxDbPassword() {
-        return getValue(INFLUXDB_PASSWORD_ENV);
+        return getValueOrDefault(INFLUXDB_PASSWORD_ENV, "");
     }
 
     public static String getInfluxdbUrl() {
@@ -53,7 +53,10 @@ public class Configuration {
     }
 
     static String getValueOrDefault(String key, String defaultValue) {
-        String value = getValue(key);
+        String value = System.getProperty(key);
+        if (value == null || value.length() == 0)
+            value = System.getenv(key);
+
         if (value == null || value.length() == 0)
             value = defaultValue;
 
