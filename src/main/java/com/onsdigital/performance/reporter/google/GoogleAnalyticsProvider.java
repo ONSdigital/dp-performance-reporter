@@ -39,7 +39,7 @@ public class GoogleAnalyticsProvider {
 
         Metrics metrics = new Metrics();
 
-        for (MetricDefinition metricDefinition : metricDefinitions.reports) {
+        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
 
             log.debug("Running Google Analytics report: " + metricDefinition.name);
             Metric metric;
@@ -82,7 +82,7 @@ public class GoogleAnalyticsProvider {
 
         if (filters != null)
             get.setFilters(filters);
-        
+
         if (maxResults != null)
             get.setMaxResults(Integer.parseInt(maxResults));
 
