@@ -11,6 +11,9 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InfluxDbMetricsProvider implements MetricsProvider {
 
     private static Log log = LogFactory.getLog(InfluxDbMetricsProvider.class);
@@ -49,7 +52,19 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
                 Metric metric = new Metric();
                 metric.name = series.getName();
                 metric.columns = series.getColumns();
-                metric.values = series.getValues();
+
+                metric.values = new ArrayList<List<String>>();
+
+                for (List<Object> objects : series.getValues()) {
+                    List<String> values = new ArrayList<String>();
+
+                    for (Object object : objects) {
+                        values.add(object.toString());
+                    }
+
+                    metric.values.add(values);
+                }
+
                 metric.tags = series.getTags();
 
                 metrics.add(metric);

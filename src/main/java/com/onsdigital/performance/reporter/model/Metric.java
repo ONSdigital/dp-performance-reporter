@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class Metric {
     public String name;
+    public MetricDefinition definition;
     public Map<String, String> tags;
     public List<String> columns;
-    public List<List<Object>> values;
+    public List<List<String>> values;
 }

@@ -11,13 +11,13 @@ public class Configuration {
     private static String AWS_BUCKET_NAME = "aws_bucket_name";
 
     // Google analytics - credentials JSON file read automatically by Google client library. Added here for completeness
-    private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS";
+    private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS"; // read by Google client
+    private static String GOOGLE_PROFILE_ID_ENV = "google_profile_id";
 
     // Influx
     private static String INFLUXDB_USERNAME_ENV = "influxdb_username";
     private static String INFLUXDB_PASSWORD_ENV = "influxdb_password";
     private static String INFLUXDB_URL_ENV = "influxdb_url";
-
     private static String INFLUXDB_URL_DEFAULT = "http://localhost:8086";
 
     public static String getPingdomUsername() {
@@ -34,6 +34,10 @@ public class Configuration {
 
     public static String getAwsBucketName() {
         return getValue(AWS_BUCKET_NAME);
+    }
+
+    public static String getGoogleProfileId() {
+        return getValue(GOOGLE_PROFILE_ID_ENV);
     }
 
     public static String getInfluxDbUsername() {
