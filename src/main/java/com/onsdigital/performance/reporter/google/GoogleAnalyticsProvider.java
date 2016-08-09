@@ -9,6 +9,7 @@ import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
+import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.ReportDefinitionsReader;
 import com.onsdigital.performance.reporter.model.*;
 import org.apache.commons.logging.Log;
@@ -30,7 +31,7 @@ public class GoogleAnalyticsProvider {
 
     public GoogleAnalyticsProvider() throws Exception {
         analytics = initializeAnalytics();
-        tableId = "ga:" + 86909399; //+ Configuration.getGoogleProfileId();
+        tableId = "ga:" + Configuration.getGoogleProfileId();
     }
 
     public Metrics getAnalytics() throws IOException {
