@@ -93,6 +93,9 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         values.add(Integer.toString(summary.responsetime.from));
         values.add(Integer.toString(summary.responsetime.to));
         values.add(Integer.toString(summary.responsetime.avgresponse));
+        values.add(Integer.toString(summary.status.totalup));
+        values.add(Integer.toString(summary.status.totaldown));
+        values.add(Integer.toString(summary.status.totalunknown));
         metric.values.add(values);
 
         return metric;
