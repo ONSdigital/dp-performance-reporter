@@ -20,7 +20,9 @@ interface PingdomService {
     @GET("summary.average/{checkId}?includeuptime=true")
     Call<SummaryResponse> getAverage(
             @Header("App-Key") String applicationKey,
-            @Path("checkId") int checkId);
+            @Path("checkId") int checkId,
+            @Query("from") long fromDate,
+            @Query("to") long toDate);
 
     @GET("results/{checkId}")
     Call<ResultsResponse> getResults(

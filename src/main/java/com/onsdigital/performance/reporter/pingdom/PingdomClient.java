@@ -83,8 +83,8 @@ public class PingdomClient {
         return response.body().results;
     }
 
-    public Summary getAverageSummary(int checkId) throws IOException {
-        Response<SummaryResponse> response = pingdom.getAverage(applicationKey, checkId).execute();
+    public Summary getAverageSummary(int checkId, long from, long to) throws IOException {
+        Response<SummaryResponse> response = pingdom.getAverage(applicationKey, checkId, from / 1000, to / 1000).execute();
         return response.body().summary;
     }
     

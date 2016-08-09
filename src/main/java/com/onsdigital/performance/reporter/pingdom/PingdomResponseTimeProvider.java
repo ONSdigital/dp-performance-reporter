@@ -2,7 +2,6 @@ package com.onsdigital.performance.reporter.pingdom;
 
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
@@ -10,11 +9,15 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
+import com.onsdigital.performance.reporter.util.DateParser;
+import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,7 +36,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         pingdomClient = new PingdomClient(username, password, applicationKey);
     }
 
-    public Metrics getResponseTimes() throws IOException {
+    public Metrics getResponseTimes() throws IOException, ParseException {
 
         MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();
@@ -56,21 +59,22 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws IOException {
+    private Metric getMetric(MetricDefinition metricDefinition) throws IOException, ParseException {
 
         Metric metric = new Metric();
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-
+        Date startDate = DateParser.parse(start);
+        Date endDate = DateParser.parse(end);
 
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));
 
         switch (type) {
             case average:
-                metric = getAverageSummaryMetric(metricDefinition, checkId);
+                metric = getAverageSummaryMetric(metricDefinition, checkId, startDate, endDate);
                 break;
         }
 
@@ -78,9 +82,9 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     }
 
-    private Metric getAverageSummaryMetric(MetricDefinition metricDefinition, int checkId) throws IOException {
+    private Metric getAverageSummaryMetric(MetricDefinition metricDefinition, int checkId, Date startDate, Date endDate) throws IOException {
 
-        Summary summary = pingdomClient.getAverageSummary(checkId);
+        Summary summary = pingdomClient.getAverageSummary(checkId, startDate.getTime(), endDate.getTime());
 
         Metric metric = new Metric();
         metric.columns = new ArrayList<String>();
@@ -93,12 +97,12 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
         metric.values = new ArrayList<List<String>>();
         List<String> values = new ArrayList<String>();
-        values.add(Integer.toString(summary.responsetime.from));
-        values.add(Integer.toString(summary.responsetime.to));
-        values.add(Integer.toString(summary.responsetime.avgresponse));
-        values.add(Integer.toString(summary.status.totalup));
-        values.add(Integer.toString(summary.status.totaldown));
-        values.add(Integer.toString(summary.status.totalunknown));
+        values.add(Long.toString(summary.responsetime.from));
+        values.add(Long.toString(summary.responsetime.to));
+        values.add(Long.toString(summary.responsetime.avgresponse));
+        values.add(Long.toString(summary.status.totalup));
+        values.add(Long.toString(summary.status.totaldown));
+        values.add(Long.toString(summary.status.totalunknown));
         metric.values.add(values);
 
         return metric;
