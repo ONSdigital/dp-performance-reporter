@@ -2,12 +2,13 @@ package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
-import com.onsdigital.performance.reporter.model.ResponseTime;
-import com.onsdigital.performance.reporter.model.ResponseTimes;
+import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.pingdom.model.Check;
 import com.onsdigital.performance.reporter.pingdom.model.Result;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PingdomResponseTimeProvider implements ResponseTimeProvider {
@@ -29,9 +30,15 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
      * @return
      * @throws IOException
      */
-    public ResponseTimes getResponseTimes(String checkIdentifier) throws IOException {
+    public Metric getResponseTimes(String checkIdentifier) throws IOException {
 
-        ResponseTimes responseTimes = new ResponseTimes();
+        Metric metric = new Metric();
+
+        metric.columns = new ArrayList<String>();
+        metric.columns.add("time");
+        metric.columns.add("status");
+        metric.columns.add("responseTime");
+        metric.columns.add("statusDescription");
 
         int checkId = 0;
         for (Check check : pingdomClient.getChecks()) {
@@ -39,18 +46,21 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
                 checkId = check.id;
         }
 
+        metric.values = new ArrayList<List<String>>();
+
         for (Result result : pingdomClient.getResults(checkId)) {
 
-            ResponseTime responseTime = new ResponseTime(
-                    result.time,
-                    result.status,
-                    result.responsetime,
-                    result.statusdesclong);
+            List<String> values = new ArrayList<String>();
 
-            responseTimes.add(responseTime);
+            values.add(Integer.toString(result.time));
+            values.add(result.status);
+            values.add(Integer.toString(result.responsetime));
+            values.add(result.statusdesclong);
+
+            metric.values.add(values);
         }
 
-        return responseTimes;
+        return metric;
     }
 
 }

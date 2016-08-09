@@ -5,8 +5,8 @@ import com.onsdigital.performance.reporter.influxdb.InfluxDbMetricsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
+import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.Metrics;
-import com.onsdigital.performance.reporter.model.ResponseTimes;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
 import org.apache.commons.logging.Log;
@@ -28,8 +28,8 @@ public class Main {
 
         log.debug("Gathering response times from Pingdom.");
         ResponseTimeProvider responseTimeProvider = new PingdomResponseTimeProvider();
-        ResponseTimes responseTimes = responseTimeProvider.getResponseTimes("Website (EN) CloudFlare");
-        fileUploader.uploadJsonForObject(responseTimes, "responsetimes.json");
+        Metric metric = responseTimeProvider.getResponseTimes("Website (EN) CloudFlare");
+        fileUploader.uploadJsonForObject(metric, "responsetimes.json");
 
         log.debug("Gathering metrics from InfluxDB.");
         MetricsProvider metricsProvider = new InfluxDbMetricsProvider();
