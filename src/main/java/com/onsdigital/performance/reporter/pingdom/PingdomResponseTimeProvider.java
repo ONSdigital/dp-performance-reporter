@@ -2,7 +2,7 @@ package com.onsdigital.performance.reporter.pingdom;
 
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.ReportDefinitionsReader;
+import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
@@ -35,7 +35,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     public Metrics getResponseTimes() throws IOException {
 
-        MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readReportDefinitions("pingdomReports.json");
+        MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
@@ -62,6 +62,9 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
+
+
+
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));
 
