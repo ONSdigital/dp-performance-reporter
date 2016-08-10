@@ -55,8 +55,6 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         }
 
         return metrics;
-
-
     }
 
     private Metric getMetric(MetricDefinition metricDefinition) throws IOException, ParseException {
@@ -87,7 +85,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         Summary summary = pingdomClient.getAverageSummary(checkId, startDate.getTime(), endDate.getTime());
 
         Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
+        metric.columns = new ArrayList<>();
         metric.columns.add("from");
         metric.columns.add("to");
         metric.columns.add("averageResponseTime");
@@ -95,7 +93,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         metric.columns.add("totalTimeDown");
         metric.columns.add("totalTimeUnknown");
 
-        metric.values = new ArrayList<List<String>>();
+        metric.values = new ArrayList<>();
         List<String> values = new ArrayList<String>();
         values.add(Long.toString(summary.responsetime.from));
         values.add(Long.toString(summary.responsetime.to));
@@ -107,7 +105,6 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
         return metric;
     }
-
 
     private Metric mapDataToMetric(MetricDefinition metricDefinition, RealtimeData data) {
         Metric metric = new Metric();
