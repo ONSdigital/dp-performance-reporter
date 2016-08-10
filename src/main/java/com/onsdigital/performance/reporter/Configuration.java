@@ -10,8 +10,9 @@ public class Configuration {
     // AWS - getting credentials from default ~/.aws/credentials location
     private static String AWS_BUCKET_NAME = "AWS_BUCKET_NAME";
 
-    // Google analytics - credentials JSON file read automatically by Google client library. Added here for completeness
-    private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS"; // read by Google client
+    // Google analytics
+    private static String GOOGLE_PRIVATE_KEY_ENV = "GOOGLE_PRIVATE_KEY";
+    private static String GOOGLE_ACCOUNT_ID_ENV = "GOOGLE_ACCOUNT_ID";
     private static String GOOGLE_PROFILE_ID_ENV = "GOOGLE_PROFILE_ID";
 
     // Influx
@@ -36,8 +37,16 @@ public class Configuration {
         return getValue(AWS_BUCKET_NAME);
     }
 
+    public static String getGooglePrivateKey() {
+        return getValue(GOOGLE_PRIVATE_KEY_ENV);
+    }
+
     public static String getGoogleProfileId() {
         return getValue(GOOGLE_PROFILE_ID_ENV);
+    }
+
+    public static String getGoogleAccountId() {
+        return getValue(GOOGLE_ACCOUNT_ID_ENV);
     }
 
     public static String getInfluxDbUsername() {
