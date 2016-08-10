@@ -3,21 +3,21 @@ package com.onsdigital.performance.reporter;
 public class Configuration {
 
     // Pingdom
-    private static String PINGDOM_USERNAME_ENV = "pingdom_username";
-    private static String PINGDOM_PASSWORD_ENV = "pingdom_password";
-    private static String PINGDOM_APPLICATION_KEY_ENV = "pingdom_application_key";
+    private static String PINGDOM_USERNAME_ENV = "PINGDOM_USERNAME";
+    private static String PINGDOM_PASSWORD_ENV = "PINGDOM_PASSWORD";
+    private static String PINGDOM_APPLICATION_KEY_ENV = "PINGDOM_APPLICATION_KEY";
 
     // AWS - getting credentials from default ~/.aws/credentials location
-    private static String AWS_BUCKET_NAME = "aws_bucket_name";
+    private static String AWS_BUCKET_NAME = "AWS_BUCKET_NAME";
 
     // Google analytics - credentials JSON file read automatically by Google client library. Added here for completeness
     private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS"; // read by Google client
-    private static String GOOGLE_PROFILE_ID_ENV = "google_profile_id";
+    private static String GOOGLE_PROFILE_ID_ENV = "GOOGLE_PROFILE_ID";
 
     // Influx
-    private static String INFLUXDB_USERNAME_ENV = "influxdb_username";
-    private static String INFLUXDB_PASSWORD_ENV = "influxdb_password";
-    private static String INFLUXDB_URL_ENV = "influxdb_url";
+    private static String INFLUXDB_USERNAME_ENV = "INFLUXDB_USERNAME";
+    private static String INFLUXDB_PASSWORD_ENV = "INFLUXDB_PASSWORD";
+    private static String INFLUXDB_URL_ENV = "INFLUXDB_URL";
     private static String INFLUXDB_URL_DEFAULT = "http://localhost:8086";
 
     public static String getPingdomUsername() {
