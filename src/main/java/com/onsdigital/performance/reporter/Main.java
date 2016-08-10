@@ -1,9 +1,9 @@
 package com.onsdigital.performance.reporter;
 
+import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metrics;
-import com.onsdigital.performance.reporter.model.ResponseTimes;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
 import org.apache.commons.logging.Log;
@@ -19,14 +19,14 @@ public class Main {
 
         log.debug("Starting performance reporter.");
 
-//        log.debug("Gathering analytics data from Google.");
-//        Metrics analytics = new GoogleAnalyticsProvider().getAnalytics();
-//        fileUploader.uploadJsonForObject(analytics, "analytics.json");
+        log.debug("Gathering analytics data from Google.");
+        Metrics analytics = new GoogleAnalyticsProvider().getAnalytics();
+        fileUploader.uploadJsonForObject(analytics, "analytics.json");
 
         log.debug("Gathering response times from Pingdom.");
         ResponseTimeProvider responseTimeProvider = new PingdomResponseTimeProvider();
 
-        ResponseTimes metrics = responseTimeProvider.getResponseTimes("");
+        Metrics metrics = responseTimeProvider.getResponseTimes();
         fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
 
 //        log.debug("Gathering metrics from InfluxDB.");

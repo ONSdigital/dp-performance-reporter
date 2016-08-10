@@ -1,13 +1,11 @@
 package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
+import com.onsdigital.performance.reporter.pingdom.model.*;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import com.onsdigital.performance.reporter.pingdom.model.Check;
-import com.onsdigital.performance.reporter.pingdom.model.ChecksResponse;
-import com.onsdigital.performance.reporter.pingdom.model.Result;
-import com.onsdigital.performance.reporter.pingdom.model.ResultsResponse;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -84,6 +82,11 @@ public class PingdomClient {
         Response<ResultsResponse> response = pingdom.getResults(applicationKey, checkId).execute();
         return response.body().results;
     }
+
+    public Summary getAverageSummary(int checkId, long from, long to) throws IOException {
+        Response<SummaryResponse> response = pingdom.getAverage(applicationKey, checkId, from / 1000, to / 1000).execute();
+        return response.body().summary;
+    }
     
     // added this to handle basic auth in service calls.
     private <S> S createService(Class<S> serviceClass, String username, String password) {
@@ -91,6 +94,10 @@ public class PingdomClient {
             String credentials = username + ":" + password;
             final String basic =
                     "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            httpClient.addInterceptor(logging);
 
             httpClient.addInterceptor(new Interceptor() {
                 public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -105,7 +112,6 @@ public class PingdomClient {
                     return chain.proceed(request);
                 }
             });
-
         }
 
         OkHttpClient client = httpClient.build();

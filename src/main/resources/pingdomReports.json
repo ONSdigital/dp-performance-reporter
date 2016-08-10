@@ -1,0 +1,46 @@
+{
+  "metrics": [
+    {
+      "name": "average-1-day",
+      "frequency": "daily",
+      "query": {
+        "check-id": "2021299",
+        "type": "average",
+        "start-date": "1daysAgo",
+        "end-date": "today"
+      },
+      "meta": {
+        "name": "Average response time",
+        "description": "Average response time for the last day"
+      }
+    },
+    {
+      "name": "average-7-days",
+      "frequency": "daily",
+      "query": {
+        "check-id": "2021299",
+        "type": "average",
+        "start-date": "7daysAgo",
+        "end-date": "today"
+      },
+      "meta": {
+        "name": "Average response time",
+        "description": "Average response time for the last 7 days"
+      }
+    },
+    {
+      "name": "average-30-days",
+      "frequency": "daily",
+      "query": {
+        "check-id": "2021299",
+        "type": "average",
+        "start-date": "30daysAgo",
+        "end-date": "today"
+      },
+      "meta": {
+        "name": "Average response time",
+        "description": "Average response time for the last 30 days"
+      }
+    }
+  ]
+}
