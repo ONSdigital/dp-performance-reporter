@@ -10,14 +10,19 @@ import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import com.onsdigital.performance.reporter.model.*;
+import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class GoogleAnalyticsProvider {
 
@@ -89,16 +94,16 @@ public class GoogleAnalyticsProvider {
 
         GaData data = get.execute();
 
-        return mapDataToMetric(metricDefinition, data);
+        return mapDataToMetric(data);
     }
 
     private Metric getRealTimeMetric(MetricDefinition metricDefinition) throws IOException {
         RealtimeData data = analytics.data().realtime().get(tableId, metricDefinition.query.get("metrics")) // Metrics.
                 .execute();
-        return mapDataToMetric(metricDefinition, data);
+        return mapDataToMetric(data);
     }
 
-    private Metric mapDataToMetric(MetricDefinition metricDefinition, RealtimeData data) {
+    private Metric mapDataToMetric(RealtimeData data) {
         Metric metric = new Metric();
         metric.columns = new ArrayList<String>();
         for (RealtimeData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
@@ -110,9 +115,9 @@ public class GoogleAnalyticsProvider {
         return metric;
     }
 
-    private Metric mapDataToMetric(MetricDefinition metricDefinition, GaData data) {
+    private Metric mapDataToMetric(GaData data) {
         Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
+        metric.columns = new ArrayList<>();
         for (GaData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
             metric.columns.add(columnHeaders.getName());
         }
@@ -125,10 +130,31 @@ public class GoogleAnalyticsProvider {
     private static Analytics initializeAnalytics() throws Exception {
 
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        GoogleCredential credential = GoogleCredential.getApplicationDefault()
-                .createScoped(Arrays.asList(AnalyticsScopes.ANALYTICS_READONLY));
+        PrivateKey privateKey = parsePrivateKey(Configuration.getGooglePrivateKey());
+
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setServiceAccountScopes(Arrays.asList(AnalyticsScopes.ANALYTICS_READONLY))
+                .setServiceAccountPrivateKey(privateKey)
+                .setServiceAccountId(Configuration.getGoogleAccountId())
+                .setJsonFactory(JSON_FACTORY)
+                .setTransport(httpTransport)
+                .build();
 
         return new Analytics.Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME).build();
     }
+
+    private static PrivateKey parsePrivateKey(String key) throws GeneralSecurityException {
+        key = key.replace("-----BEGIN PRIVATE KEY-----\\n", "");
+        key = key.replace("-----END PRIVATE KEY-----", "");
+        key = key.replace("\\n", "");
+
+        byte[] decoded = Base64.getDecoder().decode(key);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+
+        return privateKey;
+    }
+
 }
