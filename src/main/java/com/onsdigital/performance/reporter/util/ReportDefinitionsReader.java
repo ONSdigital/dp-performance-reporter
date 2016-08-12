@@ -8,6 +8,13 @@ import java.io.FileReader;
 
 public class ReportDefinitionsReader {
 
+    private static ReportDefinitionsReader reportDefinitionsReader = new ReportDefinitionsReader();
+
+    private ReportDefinitionsReader() { }
+
+    // Get singleton instance
+    public static ReportDefinitionsReader instance() { return reportDefinitionsReader; }
+
     /**
      * Read metric definitions from the given JSON filename
      * @param filename

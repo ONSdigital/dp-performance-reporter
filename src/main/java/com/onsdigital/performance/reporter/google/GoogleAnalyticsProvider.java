@@ -41,7 +41,7 @@ public class GoogleAnalyticsProvider {
 
     public Metrics getAnalytics() throws IOException {
 
-        MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readMetricDefinitions("googleAnalyticsReports.json");
+        MetricDefinitions metricDefinitions = ReportDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
 
         Metrics metrics = new Metrics();
 

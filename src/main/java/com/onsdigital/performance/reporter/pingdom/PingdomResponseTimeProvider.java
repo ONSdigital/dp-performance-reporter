@@ -39,7 +39,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     public Metrics getResponseTimes() throws IOException, ParseException {
 
-        MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readMetricDefinitions("pingdomReports.json");
+        MetricDefinitions metricDefinitions = ReportDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
