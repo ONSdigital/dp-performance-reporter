@@ -33,13 +33,13 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
     /**
      * Gather metrics for the given metric name from the given DB name.
      *
-     * @param dbName
-     * @param metricName
      * @return
      */
-    public Metrics getMetrics(String dbName, String metricName) {
+    public Metrics getMetrics() {
 
         Metrics metrics = new Metrics();
+        String dbName = "";
+        String metricName = ""; // needs to be read from configuration.
 
         log.debug("Gathering metrics: " + metricName + " from DB: " + dbName);
         Query query = new Query(String.format("SELECT * FROM %s", metricName), dbName);
@@ -53,10 +53,10 @@ public class InfluxDbMetricsProvider implements MetricsProvider {
                 metric.name = series.getName();
                 metric.columns = series.getColumns();
 
-                metric.values = new ArrayList<List<String>>();
+                metric.values = new ArrayList<>();
 
                 for (List<Object> objects : series.getValues()) {
-                    List<String> values = new ArrayList<String>();
+                    List<String> values = new ArrayList<>();
 
                     for (Object object : objects) {
                         values.add(object.toString());
