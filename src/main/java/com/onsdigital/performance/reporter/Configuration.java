@@ -21,6 +21,28 @@ public class Configuration {
     private static String INFLUXDB_URL_ENV = "INFLUXDB_URL";
     private static String INFLUXDB_URL_DEFAULT = "http://localhost:8086";
 
+    // Splunk
+    private static String SPLUNK_USERNAME_ENV = "SPLUNK_USERNAME";
+    private static String SPLUNK_PASSWORD_ENV = "SPLUNK_PASSWORD";
+    private static String SPLUNK_HOST_ENV = "SPLUNK_HOST";
+    private static String SPLUNK_PORT_ENV = "SPLUNK_PORT";
+
+    public static String getSplunkUsername() {
+        return getValueOrDefault(SPLUNK_USERNAME_ENV, "admin");
+    }
+
+    public static String getSplunkPassword() {
+        return getValueOrDefault(SPLUNK_PASSWORD_ENV, "changemenow");
+    }
+
+    public static String getSplunkHost() {
+        return getValueOrDefault(SPLUNK_HOST_ENV, "localhost");
+    }
+
+    public static int getSplunkPort() {
+        return Integer.parseInt(getValueOrDefault(SPLUNK_PORT_ENV, "8089"));
+    }
+
     public static String getPingdomUsername() {
         return getValue(PINGDOM_USERNAME_ENV);
     }
