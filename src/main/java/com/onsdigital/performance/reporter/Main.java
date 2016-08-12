@@ -2,10 +2,12 @@ package com.onsdigital.performance.reporter;
 
 import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
+import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
+import com.onsdigital.performance.reporter.splunk.SplunkMetricsProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,10 +44,23 @@ public class Main {
         // Run Pingdom response times report on another thread.
         executorService.submit(() -> RunResponseTimesReport(fileUploader));
 
-//        log.debug("Gathering metrics from InfluxDB.");
-//        MetricsProvider metricsProvider = new InfluxDbMetricsProvider();
-//        Metrics metrics = metricsProvider.getMetrics("aTimeSeries", "cpu");
-//        fileUploader.uploadJsonForObject(metrics, "metrics.json");
+        // Run Splunk reports
+        //executorService.submit(() -> RunMetricsReport(fileUploader));
+    }
+
+    private static void RunMetricsReport(FileUploader fileUploader) {
+        log.debug("Gathering metrics from Splunk.");
+
+        try {
+            MetricsProvider metricsProvider = new SplunkMetricsProvider();
+            Metrics metrics = metricsProvider.getMetrics();
+            fileUploader.uploadJsonForObject(metrics, "metrics.json");
+
+        } catch (IOException | ParseException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        log.debug("Finished generating metrics report.");
     }
 
     private static void RunResponseTimesReport(FileUploader fileUploader) {
@@ -55,9 +70,7 @@ public class Main {
             ResponseTimeProvider responseTimeProvider = new PingdomResponseTimeProvider();
             Metrics metrics = responseTimeProvider.getResponseTimes();
             fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
 

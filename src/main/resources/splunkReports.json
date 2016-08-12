@@ -1,0 +1,17 @@
+{
+  "metrics": [
+    {
+      "name": "page-rendering-time",
+      "frequency": "hourly",
+      "query": {
+        "query": "search * (index=\"sandbox\") | spath duration | timechart avg(duration)",
+        "start-date": "1daysAgo",
+        "end-date": "today"
+      },
+      "meta": {
+        "name": "Average page rendering time",
+        "description": "Average page rendering time for the last hour"
+      }
+    }
+  ]
+}
