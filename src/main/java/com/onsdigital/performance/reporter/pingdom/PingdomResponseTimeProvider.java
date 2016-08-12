@@ -9,6 +9,7 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
+import com.onsdigital.performance.reporter.pingdom.model.SummaryStatus;
 import com.onsdigital.performance.reporter.util.DateParser;
 import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
 import org.apache.commons.logging.Log;
@@ -93,14 +94,29 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         metric.columns.add("totalTimeDown");
         metric.columns.add("totalTimeUnknown");
 
+        metric.columns.add("percentageTimeUp");
+        metric.columns.add("percentageTimeDown");
+        metric.columns.add("percentageTimeUnknown");
+
+        SummaryStatus status = summary.status;
+
+        double msPerPercent = (status.totalup + status.totaldown + status.totalunknown) / 100;
+
+        long percentageUp = Math.round(status.totalup / msPerPercent);
+        long percentageDown = Math.round(status.totaldown / msPerPercent);
+        long percentageUnknown = Math.round(status.totalunknown / msPerPercent);
+
         metric.values = new ArrayList<>();
         List<String> values = new ArrayList<String>();
         values.add(Long.toString(summary.responsetime.from));
         values.add(Long.toString(summary.responsetime.to));
         values.add(Long.toString(summary.responsetime.avgresponse));
-        values.add(Long.toString(summary.status.totalup));
-        values.add(Long.toString(summary.status.totaldown));
-        values.add(Long.toString(summary.status.totalunknown));
+        values.add(Long.toString(status.totalup));
+        values.add(Long.toString(status.totaldown));
+        values.add(Long.toString(status.totalunknown));
+        values.add(Long.toString(percentageUp));
+        values.add(Long.toString(percentageDown));
+        values.add(Long.toString(percentageUnknown));
         metric.values.add(values);
 
         return metric;
