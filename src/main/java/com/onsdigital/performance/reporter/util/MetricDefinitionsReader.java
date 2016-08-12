@@ -6,14 +6,14 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class ReportDefinitionsReader {
+public class MetricDefinitionsReader {
 
-    private static ReportDefinitionsReader reportDefinitionsReader = new ReportDefinitionsReader();
+    private static MetricDefinitionsReader reportDefinitionsReader = new MetricDefinitionsReader();
 
-    private ReportDefinitionsReader() { }
+    private MetricDefinitionsReader() { }
 
     // Get singleton instance
-    public static ReportDefinitionsReader instance() { return reportDefinitionsReader; }
+    public static MetricDefinitionsReader instance() { return reportDefinitionsReader; }
 
     /**
      * Read metric definitions from the given JSON filename

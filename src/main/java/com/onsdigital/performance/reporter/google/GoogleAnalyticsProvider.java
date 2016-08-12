@@ -11,7 +11,7 @@ import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.model.*;
-import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
+import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +41,7 @@ public class GoogleAnalyticsProvider {
 
     public Metrics getAnalytics() throws IOException {
 
-        MetricDefinitions metricDefinitions = ReportDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
+        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
 
         Metrics metrics = new Metrics();
 

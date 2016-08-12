@@ -11,7 +11,7 @@ import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
 import com.onsdigital.performance.reporter.pingdom.model.SummaryStatus;
 import com.onsdigital.performance.reporter.util.DateParser;
-import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
+import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +39,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     public Metrics getResponseTimes() throws IOException, ParseException {
 
-        MetricDefinitions metricDefinitions = ReportDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
+        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
