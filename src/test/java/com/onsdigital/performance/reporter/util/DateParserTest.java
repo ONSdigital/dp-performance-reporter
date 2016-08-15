@@ -1,6 +1,5 @@
-package com.onsdigital.performance.reporter;
+package com.onsdigital.performance.reporter.util;
 
-import com.onsdigital.performance.reporter.util.DateParser;
 import org.junit.Test;
 
 import java.sql.Timestamp;
