@@ -105,7 +105,7 @@ public class GoogleAnalyticsProvider {
 
     private Metric mapDataToMetric(RealtimeData data) {
         Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
+        metric.columns = new ArrayList<>();
         for (RealtimeData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
             metric.columns.add(columnHeaders.getName());
         }
