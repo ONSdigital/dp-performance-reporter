@@ -5,6 +5,7 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URL;
 
 public class MetricDefinitionsReader {
 
@@ -22,10 +23,14 @@ public class MetricDefinitionsReader {
      * @throws FileNotFoundException
      */
     public MetricDefinitions readMetricDefinitions(String filename) throws FileNotFoundException {
-        String file = getClass().getClassLoader().getResource(filename).getFile();
+        URL resource = getClass().getClassLoader().getResource(filename);
+
+        if (resource == null)
+            throw new FileNotFoundException(filename);
+
+        String file = resource.getFile();
         FileReader fileReader = new FileReader(file);
         MetricDefinitions reportDefinitions = new Gson().fromJson(fileReader, MetricDefinitions.class);
         return reportDefinitions;
     }
-
 }
