@@ -103,7 +103,7 @@ public class GoogleAnalyticsProvider {
         return mapDataToMetric(data);
     }
 
-    private Metric mapDataToMetric(RealtimeData data) {
+    Metric mapDataToMetric(RealtimeData data) {
         Metric metric = new Metric();
         metric.columns = new ArrayList<>();
         for (RealtimeData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
@@ -115,7 +115,7 @@ public class GoogleAnalyticsProvider {
         return metric;
     }
 
-    private Metric mapDataToMetric(GaData data) {
+    static Metric mapDataToMetric(GaData data) {
         Metric metric = new Metric();
         metric.columns = new ArrayList<>();
         for (GaData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {

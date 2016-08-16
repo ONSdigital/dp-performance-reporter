@@ -32,7 +32,7 @@ public class Configuration {
     }
 
     public static String getSplunkPassword() {
-        return getValueOrDefault(SPLUNK_PASSWORD_ENV, "changemenow");
+        return getValueOrDefault(SPLUNK_PASSWORD_ENV, "changeme");
     }
 
     public static String getSplunkHost() {

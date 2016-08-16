@@ -99,7 +99,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
      * @param result
      * @return
      */
-    private Metric MapResultToMetric(Result result) {
+    Metric MapResultToMetric(Result result) {
 
         Metric metric = new Metric();
 
