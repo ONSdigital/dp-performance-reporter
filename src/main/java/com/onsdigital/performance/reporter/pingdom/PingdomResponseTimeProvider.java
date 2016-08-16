@@ -1,6 +1,5 @@
 package com.onsdigital.performance.reporter.pingdom;
 
-import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metric;
@@ -73,7 +72,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
         switch (type) {
             case average:
-                metric = getAverageSummaryMetric(metricDefinition, checkId, startDate, endDate);
+                metric = getAverageSummaryMetric(checkId, startDate, endDate);
                 break;
         }
 
@@ -81,10 +80,13 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     }
 
-    private Metric getAverageSummaryMetric(MetricDefinition metricDefinition, int checkId, Date startDate, Date endDate) throws IOException {
-
+    private Metric getAverageSummaryMetric(int checkId, Date startDate, Date endDate) throws IOException {
         Summary summary = pingdomClient.getAverageSummary(checkId, startDate.getTime(), endDate.getTime());
+        Metric metric = mapPingdomSummaryToMetric(summary);
+        return metric;
+    }
 
+    static Metric mapPingdomSummaryToMetric(Summary summary) {
         Metric metric = new Metric();
         metric.columns = new ArrayList<>();
         metric.columns.add("from");
@@ -93,21 +95,20 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         metric.columns.add("totalTimeUp");
         metric.columns.add("totalTimeDown");
         metric.columns.add("totalTimeUnknown");
-
         metric.columns.add("percentageTimeUp");
         metric.columns.add("percentageTimeDown");
         metric.columns.add("percentageTimeUnknown");
 
         SummaryStatus status = summary.status;
 
-        double msPerPercent = (status.totalup + status.totaldown + status.totalunknown) / 100;
+        double msPerPercent = (status.totalup + status.totaldown + status.totalunknown) / 100.0;
 
         long percentageUp = Math.round(status.totalup / msPerPercent);
         long percentageDown = Math.round(status.totaldown / msPerPercent);
         long percentageUnknown = Math.round(status.totalunknown / msPerPercent);
 
         metric.values = new ArrayList<>();
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         values.add(Long.toString(summary.responsetime.from));
         values.add(Long.toString(summary.responsetime.to));
         values.add(Long.toString(summary.responsetime.avgresponse));
@@ -118,20 +119,6 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         values.add(Long.toString(percentageDown));
         values.add(Long.toString(percentageUnknown));
         metric.values.add(values);
-
         return metric;
     }
-
-    private Metric mapDataToMetric(MetricDefinition metricDefinition, RealtimeData data) {
-        Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
-        for (RealtimeData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
-            metric.columns.add(columnHeaders.getName());
-        }
-
-        metric.values = data.getRows();
-
-        return metric;
-    }
-
 }
