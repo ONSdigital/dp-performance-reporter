@@ -45,7 +45,7 @@ public class Main {
         executorService.submit(() -> RunResponseTimesReport(fileUploader));
 
         // Run Splunk reports
-        //executorService.submit(() -> RunMetricsReport(fileUploader));
+        executorService.submit(() -> RunMetricsReport(fileUploader));
     }
 
     private static void RunMetricsReport(FileUploader fileUploader) {
@@ -56,7 +56,7 @@ public class Main {
             Metrics metrics = metricsProvider.getMetrics();
             fileUploader.uploadJsonForObject(metrics, "metrics.json");
 
-        } catch (IOException | ParseException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
