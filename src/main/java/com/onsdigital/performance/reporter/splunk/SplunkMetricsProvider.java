@@ -14,6 +14,7 @@ import com.splunk.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,7 +47,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
     }
 
     @Override
-    public Metrics getMetrics() throws IOException, ParseException, InterruptedException {
+    public Metrics getMetrics() throws FileNotFoundException {
 
         // Read definitions of metrics to gather from JSON config file.
         MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");
@@ -55,28 +56,36 @@ public class SplunkMetricsProvider implements MetricsProvider {
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
 
             log.debug("Running Splunk query: " + metricDefinition.name);
-            Metric metric = getMetric(metricDefinition);
+            Metric metric;
+            try {
+                metric = getMetric(metricDefinition);
 
-            // Put the original metrics definition into the metric.
-            metric.name = metricDefinition.name;
-            metric.definition = metricDefinition;
+                // Put the original metrics definition into the metric.
+                metric.name = metricDefinition.name;
+                metric.definition = metricDefinition;
+                metrics.add(metric);
+            } catch (ParseException | InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
 
-            metrics.add(metric);
         }
 
         return metrics;
     }
 
     private Metric getMetric(MetricDefinition metricDefinition) throws ParseException, InterruptedException, IOException {
-        Metric metric = null;
+        Metric metric;
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parse(start);
-        Date endDate = DateParser.parse(end);
+        Date startDate = DateParser.parseStartDate(start);
+        Date endDate = DateParser.parseEndDate(end);
 
         String query = metricDefinition.query.get("query");
+        query = SplunkQueryBuilder.buildQuery(query, startDate, endDate);
+
+        log.debug("Running Splunk query: " + query);
 
         // run the query against Splunk
         Job job = splunkService.getJobs().create(query);
@@ -99,32 +108,38 @@ public class SplunkMetricsProvider implements MetricsProvider {
      * @param result
      * @return
      */
-    Metric MapResultToMetric(Result result) {
+    static Metric MapResultToMetric(Result result) {
 
         Metric metric = new Metric();
 
         // take the name from each 'field' for the column headers
         metric.columns = new ArrayList<>();
-        for (Map<String, String> field : result.fields) {
-            metric.columns.add(field.get("name"));
+
+        if (result.fields != null) {
+            for (Map<String, String> field : result.fields) {
+                metric.columns.add(field.get("name"));
+            }
         }
 
         // The results are a map which do not always contain a value.
         metric.values = new ArrayList<>();
-        for (Map<String, String> row : result.results) {
-            List<String> values = new ArrayList<>();
 
-            // iterate each expected column, and default to zero if the value is not there.
-            for (String column : metric.columns) {
-                String value = row.get(column);
+        if (result.results != null) {
+            for (Map<String, String> row : result.results) {
+                List<String> values = new ArrayList<>();
 
-                if (value == null)
-                    value = "0";
+                // iterate each expected column, and default to zero if the value is not there.
+                for (String column : metric.columns) {
+                    String value = row.get(column);
 
-                values.add(value);
+                    if (value == null)
+                        value = "0";
+
+                    values.add(value);
+                }
+
+                metric.values.add(values);
             }
-
-            metric.values.add(values);
         }
 
         return metric;

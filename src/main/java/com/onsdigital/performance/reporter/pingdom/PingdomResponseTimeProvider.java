@@ -64,8 +64,8 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parse(start);
-        Date endDate = DateParser.parse(end);
+        Date startDate = DateParser.parseStartDate(start);
+        Date endDate = DateParser.parseEndDate(end);
 
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));

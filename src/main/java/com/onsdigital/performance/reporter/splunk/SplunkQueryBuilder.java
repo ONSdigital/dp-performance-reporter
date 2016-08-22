@@ -25,7 +25,7 @@ public class SplunkQueryBuilder {
         String start = dateFormatter.format(startDate);
         String end = dateFormatter.format(endDate);
 
-        query = String.format("search earliest=%s latest=%s %s", start, end, query);
+        query = String.format("search * earliest=%s latest=%s %s", start, end, query);
 
         return query;
     }
