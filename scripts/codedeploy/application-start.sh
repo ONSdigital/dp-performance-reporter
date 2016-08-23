@@ -20,6 +20,6 @@ source $CONFIG && docker run -d                          \
   --env=PINGDOM_PASSWORD=$PINGDOM_PASSWORD               \
   --env=PINGDOM_USERNAME=$PINGDOM_USERNAME               \
   --name=performance-reporter                            \
-  --net=influx                                           \
+  --net=metrics                                          \
   --restart=always                                       \
   $ECR_REPOSITORY_URI/performance-reporter:$GIT_COMMIT
