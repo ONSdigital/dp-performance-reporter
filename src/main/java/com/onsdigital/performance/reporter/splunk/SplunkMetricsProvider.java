@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class SplunkMetricsProvider implements MetricsProvider {
 
@@ -30,6 +31,9 @@ public class SplunkMetricsProvider implements MetricsProvider {
 
     private static Service splunkService;
     private static Gson gson = new Gson();
+
+    private static final int queryCheckInterval = 50; // check if the query is complete every 50ms
+    private static final int queryCheckTimeout = 30 * 1000; // if the query has not completed in 30 seconds then timeout.
 
     public SplunkMetricsProvider() {
         // https://answers.splunk.com/answers/67327/splunk-java-sdk-connection-to-splunk-failed.html
@@ -64,7 +68,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
                 metric.name = metricDefinition.name;
                 metric.definition = metricDefinition;
                 metrics.add(metric);
-            } catch (ParseException | InterruptedException | IOException e) {
+            } catch (ParseException | InterruptedException | IOException | TimeoutException e) {
                 e.printStackTrace();
             }
 
@@ -73,8 +77,8 @@ public class SplunkMetricsProvider implements MetricsProvider {
         return metrics;
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws ParseException, InterruptedException, IOException {
-        Metric metric;
+    private Metric getMetric(MetricDefinition metricDefinition) throws ParseException, InterruptedException, IOException, TimeoutException {
+        Metric metric = null;
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
@@ -89,8 +93,15 @@ public class SplunkMetricsProvider implements MetricsProvider {
 
         // run the query against Splunk
         Job job = splunkService.getJobs().create(query);
-        while (!job.isDone())
-            Thread.sleep(10);
+
+        int timeWaited = 0;
+        while (!job.isDone()) {
+            Thread.sleep(queryCheckInterval);
+            timeWaited += queryCheckInterval;
+            if (timeWaited >= queryCheckTimeout) {
+                throw new TimeoutException("Timeout waiting for Splunk query to complete");
+            }
+        }
 
         JobResultsArgs resultsArgs = new JobResultsArgs();
         resultsArgs.setOutputMode(JobResultsArgs.OutputMode.JSON);
