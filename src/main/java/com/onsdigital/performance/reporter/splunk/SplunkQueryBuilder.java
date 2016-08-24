@@ -22,10 +22,18 @@ public class SplunkQueryBuilder {
         query = query.replaceFirst("latest=\\d\\d/\\d\\d/\\d\\d\\d\\d:\\d\\d:\\d\\d:\\d\\d", "")
                 .trim();
 
-        String start = dateFormatter.format(startDate);
-        String end = dateFormatter.format(endDate);
+        String start = "";
+        String end = "";
 
-        query = String.format("search * earliest=%s latest=%s %s", start, end, query);
+        if (startDate != null) {
+            start = " earliest=" + dateFormatter.format(startDate);
+        }
+
+        if (endDate != null) {
+            end = " latest=" + dateFormatter.format(endDate);
+        }
+
+        query = String.format("search *%s%s %s", start, end, query);
 
         return query;
     }
