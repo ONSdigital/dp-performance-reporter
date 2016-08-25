@@ -16,7 +16,7 @@ public class DateParser {
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static Date parse(String input) throws ParseException {
+    public static Date parseStartDate(String input) throws ParseException {
 
         if (input.equals("today"))
             return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -32,5 +32,19 @@ public class DateParser {
         Date date = format.parse(input);
 
         return date;
+    }
+
+    /**
+     * For end dates we go to the end of the day, ie, the start of the next day.
+     * @param input
+     * @return
+     * @throws ParseException
+     */
+    public static Date parseEndDate(String input) throws ParseException {
+
+        Date date = parseStartDate(input);
+        long epochSecond = date.toInstant().atZone(ZoneId.systemDefault()).plusDays(1).toEpochSecond() * 1000;
+
+        return new Date(epochSecond);
     }
 }

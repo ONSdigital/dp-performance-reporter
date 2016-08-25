@@ -96,7 +96,7 @@ public class PingdomClient {
                     "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
 
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
             httpClient.addInterceptor(logging);
 
             httpClient.addInterceptor(new Interceptor() {

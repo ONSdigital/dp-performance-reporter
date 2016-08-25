@@ -5,13 +5,14 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.google.gson.Gson;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 
 public class s3FileUploader implements FileUploader {
 
+    private static Log log = LogFactory.getLog(s3FileUploader.class);
     private static String bucketName = Configuration.getAwsBucketName();
 
     private TransferManager transferManager = new TransferManager();
@@ -33,6 +35,7 @@ public class s3FileUploader implements FileUploader {
      */
     public void uploadJsonForObject(Object object, String name) {
 
+        log.debug("Uploading " + name + " to S3...");
         String json = gson.toJson(object);
 
         byte[] bytes = json.getBytes();
@@ -43,8 +46,8 @@ public class s3FileUploader implements FileUploader {
         transferManager.upload(
                 new PutObjectRequest(
                         bucketName, name, input, metadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead)
         );
+        log.debug("Upload of " + name + " is complete.");
     }
 
     public static void main(String[] args) throws IOException {

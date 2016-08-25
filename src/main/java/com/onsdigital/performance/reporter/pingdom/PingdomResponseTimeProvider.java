@@ -1,6 +1,5 @@
 package com.onsdigital.performance.reporter.pingdom;
 
-import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.Metric;
@@ -9,8 +8,9 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
+import com.onsdigital.performance.reporter.pingdom.model.SummaryStatus;
 import com.onsdigital.performance.reporter.util.DateParser;
-import com.onsdigital.performance.reporter.util.ReportDefinitionsReader;
+import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,7 +38,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     public Metrics getResponseTimes() throws IOException, ParseException {
 
-        MetricDefinitions metricDefinitions = new ReportDefinitionsReader().readMetricDefinitions("pingdomReports.json");
+        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
@@ -55,8 +55,6 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         }
 
         return metrics;
-
-
     }
 
     private Metric getMetric(MetricDefinition metricDefinition) throws IOException, ParseException {
@@ -66,15 +64,15 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parse(start);
-        Date endDate = DateParser.parse(end);
+        Date startDate = DateParser.parseStartDate(start);
+        Date endDate = DateParser.parseEndDate(end);
 
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));
 
         switch (type) {
             case average:
-                metric = getAverageSummaryMetric(metricDefinition, checkId, startDate, endDate);
+                metric = getAverageSummaryMetric(checkId, startDate, endDate);
                 break;
         }
 
@@ -82,43 +80,45 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     }
 
-    private Metric getAverageSummaryMetric(MetricDefinition metricDefinition, int checkId, Date startDate, Date endDate) throws IOException {
-
+    private Metric getAverageSummaryMetric(int checkId, Date startDate, Date endDate) throws IOException {
         Summary summary = pingdomClient.getAverageSummary(checkId, startDate.getTime(), endDate.getTime());
+        Metric metric = mapPingdomSummaryToMetric(summary);
+        return metric;
+    }
 
+    static Metric mapPingdomSummaryToMetric(Summary summary) {
         Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
+        metric.columns = new ArrayList<>();
         metric.columns.add("from");
         metric.columns.add("to");
         metric.columns.add("averageResponseTime");
         metric.columns.add("totalTimeUp");
         metric.columns.add("totalTimeDown");
         metric.columns.add("totalTimeUnknown");
+        metric.columns.add("percentageTimeUp");
+        metric.columns.add("percentageTimeDown");
+        metric.columns.add("percentageTimeUnknown");
 
-        metric.values = new ArrayList<List<String>>();
-        List<String> values = new ArrayList<String>();
+        SummaryStatus status = summary.status;
+
+        double msPerPercent = (status.totalup + status.totaldown + status.totalunknown) / 100.0;
+
+        long percentageUp = Math.round(status.totalup / msPerPercent);
+        long percentageDown = Math.round(status.totaldown / msPerPercent);
+        long percentageUnknown = Math.round(status.totalunknown / msPerPercent);
+
+        metric.values = new ArrayList<>();
+        List<String> values = new ArrayList<>();
         values.add(Long.toString(summary.responsetime.from));
         values.add(Long.toString(summary.responsetime.to));
         values.add(Long.toString(summary.responsetime.avgresponse));
-        values.add(Long.toString(summary.status.totalup));
-        values.add(Long.toString(summary.status.totaldown));
-        values.add(Long.toString(summary.status.totalunknown));
+        values.add(Long.toString(status.totalup));
+        values.add(Long.toString(status.totaldown));
+        values.add(Long.toString(status.totalunknown));
+        values.add(Long.toString(percentageUp));
+        values.add(Long.toString(percentageDown));
+        values.add(Long.toString(percentageUnknown));
         metric.values.add(values);
-
         return metric;
     }
-
-
-    private Metric mapDataToMetric(MetricDefinition metricDefinition, RealtimeData data) {
-        Metric metric = new Metric();
-        metric.columns = new ArrayList<String>();
-        for (RealtimeData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
-            metric.columns.add(columnHeaders.getName());
-        }
-
-        metric.values = data.getRows();
-
-        return metric;
-    }
-
 }

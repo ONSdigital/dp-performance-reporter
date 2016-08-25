@@ -3,22 +3,45 @@ package com.onsdigital.performance.reporter;
 public class Configuration {
 
     // Pingdom
-    private static String PINGDOM_USERNAME_ENV = "pingdom_username";
-    private static String PINGDOM_PASSWORD_ENV = "pingdom_password";
-    private static String PINGDOM_APPLICATION_KEY_ENV = "pingdom_application_key";
+    private static String PINGDOM_USERNAME_ENV = "PINGDOM_USERNAME";
+    private static String PINGDOM_PASSWORD_ENV = "PINGDOM_PASSWORD";
+    private static String PINGDOM_APPLICATION_KEY_ENV = "PINGDOM_APPLICATION_KEY";
 
     // AWS - getting credentials from default ~/.aws/credentials location
-    private static String AWS_BUCKET_NAME = "aws_bucket_name";
+    private static String AWS_BUCKET_NAME = "AWS_BUCKET_NAME";
 
-    // Google analytics - credentials JSON file read automatically by Google client library. Added here for completeness
-    private static String GOOGLE_CRENDENTIALS_LOCATION_ENV = "GOOGLE_APPLICATION_CREDENTIALS"; // read by Google client
-    private static String GOOGLE_PROFILE_ID_ENV = "google_profile_id";
+    // Google analytics
+    private static String GOOGLE_PRIVATE_KEY_ENV = "GOOGLE_PRIVATE_KEY";
+    private static String GOOGLE_ACCOUNT_ID_ENV = "GOOGLE_ACCOUNT_ID";
+    private static String GOOGLE_PROFILE_ID_ENV = "GOOGLE_PROFILE_ID";
 
     // Influx
-    private static String INFLUXDB_USERNAME_ENV = "influxdb_username";
-    private static String INFLUXDB_PASSWORD_ENV = "influxdb_password";
-    private static String INFLUXDB_URL_ENV = "influxdb_url";
+    private static String INFLUXDB_USERNAME_ENV = "INFLUXDB_USERNAME";
+    private static String INFLUXDB_PASSWORD_ENV = "INFLUXDB_PASSWORD";
+    private static String INFLUXDB_URL_ENV = "INFLUXDB_URL";
     private static String INFLUXDB_URL_DEFAULT = "http://localhost:8086";
+
+    // Splunk
+    private static String SPLUNK_USERNAME_ENV = "SPLUNK_USERNAME";
+    private static String SPLUNK_PASSWORD_ENV = "SPLUNK_PASSWORD";
+    private static String SPLUNK_HOST_ENV = "SPLUNK_HOST";
+    private static String SPLUNK_PORT_ENV = "SPLUNK_PORT";
+
+    public static String getSplunkUsername() {
+        return getValueOrDefault(SPLUNK_USERNAME_ENV, "admin");
+    }
+
+    public static String getSplunkPassword() {
+        return getValueOrDefault(SPLUNK_PASSWORD_ENV, "changeme");
+    }
+
+    public static String getSplunkHost() {
+        return getValueOrDefault(SPLUNK_HOST_ENV, "localhost");
+    }
+
+    public static int getSplunkPort() {
+        return Integer.parseInt(getValueOrDefault(SPLUNK_PORT_ENV, "8089"));
+    }
 
     public static String getPingdomUsername() {
         return getValue(PINGDOM_USERNAME_ENV);
@@ -36,8 +59,16 @@ public class Configuration {
         return getValue(AWS_BUCKET_NAME);
     }
 
+    public static String getGooglePrivateKey() {
+        return getValue(GOOGLE_PRIVATE_KEY_ENV);
+    }
+
     public static String getGoogleProfileId() {
         return getValue(GOOGLE_PROFILE_ID_ENV);
+    }
+
+    public static String getGoogleAccountId() {
+        return getValue(GOOGLE_ACCOUNT_ID_ENV);
     }
 
     public static String getInfluxDbUsername() {

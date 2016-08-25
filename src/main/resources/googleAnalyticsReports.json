@@ -57,7 +57,7 @@
       "name": "top-landing-pages-30-days",
       "frequency": "daily",
       "query": {
-        "dimensions": "ga:landingPagePath",
+        "dimensions": "ga:landingPagePath,ga:pageTitle",
         "metrics": "ga:sessions,ga:pageviews,ga:users,ga:pageviewsPerSession,ga:avgSessionDuration,ga:exits",
         "start-date": "30daysAgo",
         "end-date": "yesterday",
