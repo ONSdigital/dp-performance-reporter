@@ -15,10 +15,13 @@ source $CONFIG && docker run -d                          \
   --env=GOOGLE_ACCOUNT_ID=$GOOGLE_ACCOUNT_ID             \
   --env=GOOGLE_PRIVATE_KEY=$GOOGLE_PRIVATE_KEY           \
   --env=GOOGLE_PROFILE_ID=$GOOGLE_PROFILE_ID             \
-  --env=INFLUXDB_URL=$INFLUXDB_URL                       \
   --env=PINGDOM_APPLICATION_KEY=$PINGDOM_APPLICATION_KEY \
   --env=PINGDOM_PASSWORD=$PINGDOM_PASSWORD               \
   --env=PINGDOM_USERNAME=$PINGDOM_USERNAME               \
+  --env=SPLUNK_HOST=$SPLUNK_HOST                         \
+  --env=SPLUNK_PASSWORD=$SPLUNK_PASSWORD                 \
+  --env=SPLUNK_PORT=$SPLUNK_PORT                         \
+  --env=SPLUNK_USERNAME=$SPLUNK_USERNAME                 \
   --name=performance-reporter                            \
   --net=metrics                                          \
   --restart=always                                       \
