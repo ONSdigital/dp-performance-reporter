@@ -6,7 +6,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "1daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -19,7 +19,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "7daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -32,7 +32,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "30daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -45,7 +45,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1h avg(timeTaken)",
         "start-date": "1daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -58,7 +58,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "30daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
