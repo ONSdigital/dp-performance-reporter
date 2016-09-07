@@ -40,6 +40,20 @@
       }
     },
     {
+      "name": "browsers",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:browser",
+        "metrics": "ga:sessions",
+        "start-date": "90daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Browsers",
+        "description": "90 days of Browser visits for all sites."
+      }
+    },
+    {
       "name": "top-pages-realtime",
       "frequency": "realtime",
       "query": {
