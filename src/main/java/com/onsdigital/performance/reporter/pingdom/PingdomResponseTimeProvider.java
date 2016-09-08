@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +37,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         pingdomClient = new PingdomClient(username, password, applicationKey);
     }
 
-    public Metrics getResponseTimes() throws IOException, ParseException {
+    public Metrics getResponseTimes() throws IOException, ParseException, URISyntaxException {
 
         MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
         Metrics metrics = new Metrics();

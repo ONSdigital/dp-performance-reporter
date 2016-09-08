@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,7 +71,7 @@ public class Main {
             ResponseTimeProvider responseTimeProvider = new PingdomResponseTimeProvider();
             Metrics metrics = responseTimeProvider.getResponseTimes();
             fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
-        } catch (IOException | ParseException e) {
+        } catch (IOException | ParseException | URISyntaxException e) {
             e.printStackTrace();
         }
 
