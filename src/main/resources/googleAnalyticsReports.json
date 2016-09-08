@@ -31,6 +31,7 @@
       "query": {
         "dimensions": "ga:deviceCategory",
         "metrics": "ga:sessions",
+        "sort": "-ga:sessions",
         "start-date": "90daysAgo",
         "end-date": "yesterday"
       },
@@ -45,6 +46,7 @@
       "query": {
         "dimensions": "ga:browser",
         "metrics": "ga:sessions",
+        "sort": "-ga:sessions",
         "start-date": "90daysAgo",
         "end-date": "yesterday"
       },
