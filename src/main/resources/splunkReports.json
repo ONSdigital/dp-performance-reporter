@@ -47,7 +47,7 @@
         "start-date": "1daysAgo",
         "end-date": "1daysAgo"
       },
-      "meta": {UpdUse
+      "meta": {
         "name": "Average request time",
         "description": "Average request times hourly over the last day"
       }
