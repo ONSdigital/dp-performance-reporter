@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
     }
 
     @Override
-    public Metrics getMetrics() throws FileNotFoundException {
+    public Metrics getMetrics() throws FileNotFoundException, URISyntaxException {
 
         // Read definitions of metrics to gather from JSON config file.
         MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");

@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -39,7 +40,7 @@ public class GoogleAnalyticsProvider {
         tableId = "ga:" + Configuration.getGoogleProfileId();
     }
 
-    public Metrics getAnalytics() throws IOException {
+    public Metrics getAnalytics() throws IOException, URISyntaxException {
 
         MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
 
