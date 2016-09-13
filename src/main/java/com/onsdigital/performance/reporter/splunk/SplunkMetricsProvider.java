@@ -34,7 +34,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
     private static Gson gson = new Gson();
 
     private static final int queryCheckInterval = 50; // check if the query is complete every 50ms
-    private static final int queryCheckTimeout = 30 * 1000; // if the query has not completed in 30 seconds then timeout.
+    private static final int queryCheckTimeout = 300 * 1000; // if the query has not completed in x seconds then timeout.
 
     public SplunkMetricsProvider() {
         // https://answers.splunk.com/answers/67327/splunk-java-sdk-connection-to-splunk-failed.html
@@ -100,6 +100,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
             Thread.sleep(queryCheckInterval);
             timeWaited += queryCheckInterval;
             if (timeWaited >= queryCheckTimeout) {
+                job.cancel();
                 throw new TimeoutException("Timeout waiting for Splunk query to complete");
             }
         }
