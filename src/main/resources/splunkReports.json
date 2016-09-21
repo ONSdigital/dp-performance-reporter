@@ -6,7 +6,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "1daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -19,7 +19,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "7daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -32,7 +32,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "30daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -45,7 +45,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1h avg(timeTaken)",
         "start-date": "1daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -58,7 +58,7 @@
       "query": {
         "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
         "start-date": "30daysAgo",
-        "end-date": "today"
+        "end-date": "1daysAgo"
       },
       "meta": {
         "name": "Average request time",
@@ -69,26 +69,13 @@
       "name": "publish-time-30-day",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=COLLECTIONS_PUBLISH_TIME | timechart span=1d avg(collectionsPublishTime)",
+        "query": "index=\"metrics\" metricsType=\"COLLECTIONS_PUBLISH_TIME\" collectionsPublishType=\"scheduled\" collectionsPublishStartTime=\"09:30\"| timechart span=1d max(collectionsPublishTime) as publish_time, sum(collectionsPublishFileCount) as file_count",
         "start-date": "30daysAgo",
         "end-date": "today"
       },
       "meta": {
         "name": "Average request time",
         "description": "Average request times daily over the last 30 days"
-      }
-    },
-    {
-      "name": "publish-file-30-day",
-      "frequency": "hourly",
-      "query": {
-        "query": "(index=metrics) metricsType=COLLECTIONS_PUBLISH_TIME | timechart span=1d avg(collectionsPublishFileCount)",
-        "start-date": "30daysAgo",
-        "end-date": "today"
-      },
-      "meta": {
-        "name": "Average publish file count",
-        "description": "Average publish file counts daily over the last 30 days"
       }
     }
   ]
