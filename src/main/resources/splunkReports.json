@@ -4,7 +4,7 @@
       "name": "request-time-1-day",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
+        "query": "index=request-time-daily | timechart span=1d avg(timeTaken)",
         "start-date": "1daysAgo",
         "end-date": "1daysAgo"
       },
@@ -17,7 +17,7 @@
       "name": "request-time-7-day",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
+        "query": "index=request-time-daily | timechart span=7d avg(timeTaken)",
         "start-date": "7daysAgo",
         "end-date": "1daysAgo"
       },
@@ -30,7 +30,7 @@
       "name": "request-time-30-day",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
+        "query": "index=request-time-daily | timechart span=30d avg(timeTaken)",
         "start-date": "30daysAgo",
         "end-date": "1daysAgo"
       },
@@ -43,7 +43,7 @@
       "name": "request-time-1-day-hourly",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1h avg(timeTaken)",
+        "query": "index=request-time-hourly | timechart span=1h avg(timeTaken)",
         "start-date": "1daysAgo",
         "end-date": "1daysAgo"
       },
@@ -56,7 +56,7 @@
       "name": "request-time-30-day-daily",
       "frequency": "hourly",
       "query": {
-        "query": "(index=metrics) metricsType=REQUEST_TIME | timechart span=1d avg(timeTaken)",
+        "query": "index=request-time-daily | timechart span=1d avg(timeTaken)",
         "start-date": "30daysAgo",
         "end-date": "1daysAgo"
       },
