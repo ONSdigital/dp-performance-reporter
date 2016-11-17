@@ -100,6 +100,20 @@
         "name": "Top Traffic Sources (30 Days)",
         "description": "Last 30 days' Traffic Sources, measured by visits, for all sites."
       }
+    },
+    {
+      "name": "search-refinement-percentage",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Top Traffic Sources (30 Days)",
+        "description": "Last 30 days' Traffic Sources, measured by visits, for all sites."
+      }
     }
   ]
 }
