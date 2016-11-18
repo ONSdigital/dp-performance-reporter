@@ -111,7 +111,33 @@
         "end-date": "yesterday"
       },
       "meta": {
-        "name": "Top Traffic Sources (30 Days)",
+        "name": "Search refinement percentage (30 days)",
+        "description": "Last 30 days of search refinement percentages by day."
+      }
+    },
+    {
+      "name": "search-refinement-average-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search refinement average (30 days)",
+        "description": "Last 30 days of search refinement percentage as an average."
+      }
+    },
+    {
+      "name": "search-refinement-average-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Search refinement average (60 - 30 days)",
         "description": "Last 30 days' Traffic Sources, measured by visits, for all sites."
       }
     }
