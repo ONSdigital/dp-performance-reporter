@@ -138,7 +138,47 @@
       },
       "meta": {
         "name": "Search refinement average (60 - 30 days)",
-        "description": "Last 30 days' Traffic Sources, measured by visits, for all sites."
+        "description": "30 days prior to the last 30 days of search refinement average percentage"
+      }
+    },
+    {
+      "name": "search-exit-percentage",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:searchExitRate",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search refinement percentage (30 days)",
+        "description": "Last 30 days of Search exit percentages by day."
+      }
+    },
+    {
+      "name": "search-exit-average-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:searchExitRate",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search exit average (30 days)",
+        "description": "Last 30 days of Search exit average percentage."
+      }
+    },
+    {
+      "name": "search-exit-average-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:searchExitRate",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Search exit average (60 - 30 days)",
+        "description": "30 days prior to the last 30 days of search exit average percentage"
       }
     }
   ]
