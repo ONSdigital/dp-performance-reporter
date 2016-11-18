@@ -180,6 +180,46 @@
         "name": "Search exit average (60 - 30 days)",
         "description": "30 days prior to the last 30 days of search exit average percentage"
       }
+    },
+    {
+      "name": "visits-daily-30-days",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Visits daily (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "visits-total-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Visits total (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "visits-total-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Visits total (60 - 30 days)",
+        "description": ""
+      }
     }
   ]
 }
