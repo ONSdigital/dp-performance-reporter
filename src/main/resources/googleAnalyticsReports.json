@@ -220,6 +220,49 @@
         "name": "Visits total (60 - 30 days)",
         "description": ""
       }
+    },
+    {
+      "name": "direct-visits-daily-30-days",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Direct visits daily (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "direct-visits-total-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Direct visits total (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "direct-visits-total-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Direct visits total (60 - 30 days)",
+        "description": ""
+      }
     }
   ]
 }
