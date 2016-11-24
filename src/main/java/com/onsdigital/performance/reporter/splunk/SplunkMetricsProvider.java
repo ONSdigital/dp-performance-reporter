@@ -66,7 +66,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
                 metric.definition = metricDefinition;
                 metrics.add(metric);
             } catch (ParseException | InterruptedException | IOException | TimeoutException e) {
-                log.error("Unexpected error getting Splunk metric: " + metricDefinition.name , e);
+                log.error("Exception getting Splunk metric: " + metricDefinition.name , e);
             }
         }
 
