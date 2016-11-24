@@ -3,7 +3,6 @@ package com.onsdigital.performance.reporter;
 import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
-import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
 import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
@@ -14,8 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,8 +52,9 @@ public class Main {
         log.debug("Gathering metrics from Splunk.");
 
         try {
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");
             MetricsProvider metricsProvider = new SplunkMetricsProvider();
-            Metrics metrics = metricsProvider.getMetrics();
+            Metrics metrics = metricsProvider.getMetrics(metricDefinitions);
             fileUploader.uploadJsonForObject(metrics, "metrics.json");
 
         } catch (Exception e) {
@@ -70,10 +68,11 @@ public class Main {
         log.debug("Gathering response times from Pingdom.");
 
         try {
-            ResponseTimeProvider responseTimeProvider = new PingdomResponseTimeProvider();
-            Metrics metrics = responseTimeProvider.getResponseTimes();
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
+            MetricsProvider responseTimeProvider = new PingdomResponseTimeProvider();
+            Metrics metrics = responseTimeProvider.getMetrics(metricDefinitions);
             fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
-        } catch (IOException | ParseException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -83,13 +82,14 @@ public class Main {
     private static void RunAnalyticsReport(FileUploader fileUploader) {
         log.debug("Gathering analytics data from Google.");
 
-        Metrics analytics;
+        Metrics metrics;
         try {
+            MetricsProvider googleAnalyticsProvider = new GoogleAnalyticsProvider();
             MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
-            analytics = new GoogleAnalyticsProvider().getAnalytics(metricDefinitions);
-            fileUploader.uploadJsonForObject(analytics, "analytics.json");
+            metrics = googleAnalyticsProvider.getMetrics(metricDefinitions);
+            fileUploader.uploadJsonForObject(metrics, "analytics.json");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Unexpected exception thrown when running analytics report.", e);
         }
 
         log.debug("Finished generating analytics report.");
