@@ -9,12 +9,10 @@ import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.splunk.model.Result;
 import com.onsdigital.performance.reporter.util.DateParser;
-import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import com.splunk.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,10 +49,9 @@ public class SplunkMetricsProvider implements MetricsProvider {
     }
 
     @Override
-    public Metrics getMetrics() throws FileNotFoundException {
+    public Metrics getMetrics(MetricDefinitions metricDefinitions) {
 
         // Read definitions of metrics to gather from JSON config file.
-        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
@@ -69,16 +66,15 @@ public class SplunkMetricsProvider implements MetricsProvider {
                 metric.definition = metricDefinition;
                 metrics.add(metric);
             } catch (ParseException | InterruptedException | IOException | TimeoutException e) {
-                e.printStackTrace();
+                log.error("Unexpected error getting Splunk metric: " + metricDefinition.name , e);
             }
-
         }
 
         return metrics;
     }
 
     private Metric getMetric(MetricDefinition metricDefinition) throws ParseException, InterruptedException, IOException, TimeoutException {
-        Metric metric = null;
+        Metric metric;
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
@@ -116,9 +112,9 @@ public class SplunkMetricsProvider implements MetricsProvider {
     }
 
     /**
-     * Map the splunk result model to the generic metric model.
-     * @param result
-     * @return
+     * Map the Splunk result model to the generic metric model.
+     * @param result - the Result object returned from Splunk
+     * @return - the populated Metric object.
      */
     static Metric MapResultToMetric(Result result) {
 

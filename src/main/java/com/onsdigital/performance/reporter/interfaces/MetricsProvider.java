@@ -1,13 +1,17 @@
 package com.onsdigital.performance.reporter.interfaces;
 
+import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
-
-import java.io.FileNotFoundException;
 
 /**
  * Generic interface for gathering metrics.
  */
 public interface MetricsProvider {
 
-    Metrics getMetrics() throws FileNotFoundException;
+    /**
+     * Generic method to retrieve Metrics from the given MetricDefinitions.
+     * @param metricDefinitions - defines the metrics to gather.
+     * @return = the populated metrics.
+     */
+    Metrics getMetrics(MetricDefinitions metricDefinitions);
 }
