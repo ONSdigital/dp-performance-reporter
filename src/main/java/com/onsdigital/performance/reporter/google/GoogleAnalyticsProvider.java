@@ -33,7 +33,7 @@ public class GoogleAnalyticsProvider {
     private static Analytics analytics;
     private static String tableId;
 
-    public GoogleAnalyticsProvider() throws Exception {
+    public GoogleAnalyticsProvider() throws GeneralSecurityException, IOException {
         analytics = initializeAnalytics();
         tableId = "ga:" + Configuration.getGoogleProfileId();
     }
@@ -129,7 +129,7 @@ public class GoogleAnalyticsProvider {
         return metric;
     }
 
-    private static Analytics initializeAnalytics() throws Exception {
+    private static Analytics initializeAnalytics() throws GeneralSecurityException, IOException {
 
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         PrivateKey privateKey = parsePrivateKey(Configuration.getGooglePrivateKey());
