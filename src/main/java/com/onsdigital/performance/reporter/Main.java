@@ -22,7 +22,6 @@ public class Main {
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) throws Exception {
-
         try {
             while (true) {
                 updateReports();
@@ -87,6 +86,22 @@ public class Main {
             MetricsProvider googleAnalyticsProvider = new GoogleAnalyticsProvider();
             MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
             metrics = googleAnalyticsProvider.getMetrics(metricDefinitions);
+
+//            for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
+//
+//                Metric metric;
+//
+//                if (metricDefinition.providerClass == null || metricDefinition.providerClass.isEmpty()) {
+//                    // use default analytics provider
+//                } else {
+//                    MetricProvider metricProvider = (MetricProvider) Class.forName(metricDefinition.providerClass).newInstance();
+//                    metric = metricProvider.getMetric(metricDefinition);
+//                    metric.name = metricDefinition.name;
+//                    metric.definition = metricDefinition;
+//                    metrics.add(metric);
+//                }
+//            }
+
             fileUploader.uploadJsonForObject(metrics, "analytics.json");
         } catch (Exception e) {
             log.error("Unexpected exception thrown when running analytics report.", e);
