@@ -10,6 +10,7 @@ import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
+import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class GoogleAnalyticsProvider {
+public class GoogleAnalyticsProvider implements MetricsProvider {
 
     private static Log log = LogFactory.getLog(GoogleAnalyticsProvider.class);
 
@@ -40,28 +41,34 @@ public class GoogleAnalyticsProvider {
 
     /**
      * Produce metrics from google analytics based on the JSON configuration file.
+     *
      * @return - the metrics gathered from Google Analytics
-     * @throws IOException - if there is an issue calling Google Analytics.
      */
-    public Metrics getAnalytics(MetricDefinitions metricDefinitions) throws IOException {
+    @Override
+    public Metrics getMetrics(MetricDefinitions metricDefinitions) {
 
         Metrics metrics = new Metrics();
 
         for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
 
             log.debug("Running Google Analytics report: " + metricDefinition.name);
-            Metric metric;
 
-            if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
-                metric = getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
-            } else {
-                metric = getMetric(metricDefinition);
+            try {
+                Metric metric;
+
+                if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
+                    metric = getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
+                } else {
+                    metric = getMetric(metricDefinition);
+                }
+
+                metric.name = metricDefinition.name;
+                metric.definition = metricDefinition;
+                metrics.add(metric);
+
+            } catch (IOException e) {
+                log.error("Exception getting Google Analytics metric: " + metricDefinition.name , e);
             }
-
-            metric.name = metricDefinition.name;
-            metric.definition = metricDefinition;
-
-            metrics.add(metric);
         }
 
         return metrics;
@@ -154,8 +161,6 @@ public class GoogleAnalyticsProvider {
         byte[] decoded = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-
-        return privateKey;
+        return keyFactory.generatePrivate(keySpec);
     }
 }
