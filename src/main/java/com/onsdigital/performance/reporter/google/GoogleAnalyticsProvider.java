@@ -158,5 +158,4 @@ public class GoogleAnalyticsProvider {
 
         return privateKey;
     }
-
 }
