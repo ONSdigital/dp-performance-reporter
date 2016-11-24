@@ -4,10 +4,12 @@ import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
+import com.onsdigital.performance.reporter.model.MetricDefinitions;
 import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
 import com.onsdigital.performance.reporter.splunk.SplunkMetricsProvider;
+import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -83,7 +85,8 @@ public class Main {
 
         Metrics analytics;
         try {
-            analytics = new GoogleAnalyticsProvider().getAnalytics();
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
+            analytics = new GoogleAnalyticsProvider().getAnalytics(metricDefinitions);
             fileUploader.uploadJsonForObject(analytics, "analytics.json");
         } catch (Exception e) {
             e.printStackTrace();

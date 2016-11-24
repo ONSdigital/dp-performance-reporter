@@ -11,12 +11,10 @@ import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.model.*;
-import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -40,9 +38,12 @@ public class GoogleAnalyticsProvider {
         tableId = "ga:" + Configuration.getGoogleProfileId();
     }
 
-    public Metrics getAnalytics() throws IOException, URISyntaxException {
-
-        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
+    /**
+     * Produce metrics from google analytics based on the JSON configuration file.
+     * @return - the metrics gathered from Google Analytics
+     * @throws IOException - if there is an issue calling Google Analytics.
+     */
+    public Metrics getAnalytics(MetricDefinitions metricDefinitions) throws IOException {
 
         Metrics metrics = new Metrics();
 
