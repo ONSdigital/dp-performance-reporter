@@ -2,6 +2,7 @@ package com.onsdigital.performance.reporter.splunk;
 
 import com.google.gson.Gson;
 import com.onsdigital.performance.reporter.Configuration;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-public class SplunkMetricsProvider implements MetricsProvider {
+public class SplunkMetricsProvider implements MetricsProvider, MetricProvider {
 
     private static Log log = LogFactory.getLog(SplunkMetricsProvider.class);
 
@@ -65,22 +66,29 @@ public class SplunkMetricsProvider implements MetricsProvider {
                 metric.name = metricDefinition.name;
                 metric.definition = metricDefinition;
                 metrics.add(metric);
-            } catch (ParseException | InterruptedException | IOException | TimeoutException e) {
-                log.error("Exception getting Splunk metric: " + metricDefinition.name , e);
+            } catch (Exception e) {
+                log.error("Exception getting Splunk metric: " + metricDefinition.name, e);
             }
         }
 
         return metrics;
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws ParseException, InterruptedException, IOException, TimeoutException {
-        Metric metric;
+    @Override
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
+        Metric metric = null;
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parseStartDate(start);
-        Date endDate = DateParser.parseEndDate(end);
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = DateParser.parseStartDate(start);
+            endDate = DateParser.parseEndDate(end);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         String query = metricDefinition.query.get("query");
         query = SplunkQueryBuilder.buildQuery(query, startDate, endDate);
@@ -90,22 +98,26 @@ public class SplunkMetricsProvider implements MetricsProvider {
         // run the query against Splunk
         Job job = splunkService.getJobs().create(query);
 
-        int timeWaited = 0;
-        while (!job.isDone()) {
-            Thread.sleep(queryCheckInterval);
-            timeWaited += queryCheckInterval;
-            if (timeWaited >= queryCheckTimeout) {
-                job.cancel();
-                throw new TimeoutException("Timeout waiting for Splunk query to complete");
+        try {
+            int timeWaited = 0;
+            while (!job.isDone()) {
+                Thread.sleep(queryCheckInterval);
+                timeWaited += queryCheckInterval;
+                if (timeWaited >= queryCheckTimeout) {
+                    job.cancel();
+                    throw new TimeoutException("Timeout waiting for Splunk query to complete");
+                }
             }
-        }
 
-        JobResultsArgs resultsArgs = new JobResultsArgs();
-        resultsArgs.setOutputMode(JobResultsArgs.OutputMode.JSON);
+            JobResultsArgs resultsArgs = new JobResultsArgs();
+            resultsArgs.setOutputMode(JobResultsArgs.OutputMode.JSON);
 
-        try (InputStream results = job.getResults(resultsArgs)){
-            Result result = gson.fromJson(new InputStreamReader(results), Result.class);
-            metric = MapResultToMetric(result);
+            try (InputStream results = job.getResults(resultsArgs)) {
+                Result result = gson.fromJson(new InputStreamReader(results), Result.class);
+                metric = MapResultToMetric(result);
+            }
+        } catch (InterruptedException | TimeoutException e) {
+            e.printStackTrace();
         }
 
         return metric;
@@ -113,6 +125,7 @@ public class SplunkMetricsProvider implements MetricsProvider {
 
     /**
      * Map the Splunk result model to the generic metric model.
+     *
      * @param result - the Result object returned from Splunk
      * @return - the populated Metric object.
      */

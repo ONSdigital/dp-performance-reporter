@@ -1,6 +1,7 @@
 package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
@@ -20,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class PingdomResponseTimeProvider implements MetricsProvider {
+public class PingdomResponseTimeProvider implements MetricsProvider, MetricProvider {
 
     private static Log log = LogFactory.getLog(PingdomResponseTimeProvider.class);
 
@@ -35,7 +36,6 @@ public class PingdomResponseTimeProvider implements MetricsProvider {
         pingdomClient = new PingdomClient(username, password, applicationKey);
     }
 
-
     @Override
     public Metrics getMetrics(MetricDefinitions metricDefinitions) {
         Metrics metrics = new Metrics();
@@ -49,7 +49,7 @@ public class PingdomResponseTimeProvider implements MetricsProvider {
                 metric.name = metricDefinition.name;
                 metric.definition = metricDefinition;
                 metrics.add(metric);
-            } catch (IOException | ParseException e) {
+            } catch (IOException e) {
                 log.error("Exception getting Pingdom metric: " + metricDefinition.name, e);
             }
         }
@@ -57,15 +57,23 @@ public class PingdomResponseTimeProvider implements MetricsProvider {
         return metrics;
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws IOException, ParseException {
+
+    @Override
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
 
         Metric metric = new Metric();
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parseStartDate(start);
-        Date endDate = DateParser.parseEndDate(end);
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = DateParser.parseStartDate(start);
+            endDate = DateParser.parseEndDate(end);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));

@@ -3,6 +3,8 @@ package com.onsdigital.performance.reporter.interfaces;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
 
+import java.io.IOException;
+
 /**
  * Generic interface for gathering metrics.
  */
@@ -13,5 +15,5 @@ public interface MetricProvider {
      * @param metricDefinition - defines the metric to gather.
      * @return = the populated metric.
      */
-    Metric getMetric(MetricDefinition metricDefinition);
+    Metric getMetric(MetricDefinition metricDefinition) throws IOException;
 }

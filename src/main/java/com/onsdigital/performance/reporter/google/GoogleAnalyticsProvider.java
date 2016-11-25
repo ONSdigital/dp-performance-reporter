@@ -10,6 +10,7 @@ import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
 import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.*;
 import org.apache.commons.logging.Log;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class GoogleAnalyticsProvider implements MetricsProvider {
+public class GoogleAnalyticsProvider implements MetricsProvider, MetricProvider {
 
     private static Log log = LogFactory.getLog(GoogleAnalyticsProvider.class);
 
@@ -67,14 +68,15 @@ public class GoogleAnalyticsProvider implements MetricsProvider {
                 metrics.add(metric);
 
             } catch (IOException e) {
-                log.error("Exception getting Google Analytics metric: " + metricDefinition.name , e);
+                log.error("Exception getting Google Analytics metric: " + metricDefinition.name, e);
             }
         }
 
         return metrics;
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws IOException {
+    @Override
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
 
         String metrics = metricDefinition.query.get("metrics");
         String startDate = metricDefinition.query.get("start-date");
@@ -102,7 +104,6 @@ public class GoogleAnalyticsProvider implements MetricsProvider {
             get.setMaxResults(Integer.parseInt(maxResults));
 
         GaData data = get.execute();
-
         return mapDataToMetric(data);
     }
 
@@ -125,7 +126,12 @@ public class GoogleAnalyticsProvider implements MetricsProvider {
     }
 
     static Metric mapDataToMetric(GaData data) {
+
         Metric metric = new Metric();
+
+        if (data == null)
+            return metric;
+
         metric.columns = new ArrayList<>();
         for (GaData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
             metric.columns.add(columnHeaders.getName());
