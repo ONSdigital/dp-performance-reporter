@@ -3,11 +3,8 @@ package com.onsdigital.performance.reporter.splunk;
 import com.google.gson.Gson;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.MetricProvider;
-import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
-import com.onsdigital.performance.reporter.model.MetricDefinitions;
-import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.splunk.model.Result;
 import com.onsdigital.performance.reporter.util.DateParser;
 import com.splunk.*;
@@ -24,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-public class SplunkMetricsProvider implements MetricsProvider, MetricProvider {
+public class SplunkMetricsProvider implements MetricProvider {
 
     private static Log log = LogFactory.getLog(SplunkMetricsProvider.class);
 
@@ -47,31 +44,6 @@ public class SplunkMetricsProvider implements MetricsProvider, MetricProvider {
         loginArguments.setPort(Configuration.getSplunkPort());
 
         splunkService = Service.connect(loginArguments);
-    }
-
-    @Override
-    public Metrics getMetrics(MetricDefinitions metricDefinitions) {
-
-        // Read definitions of metrics to gather from JSON config file.
-        Metrics metrics = new Metrics();
-
-        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-
-            log.debug("Running Splunk query: " + metricDefinition.name);
-            Metric metric;
-            try {
-                metric = getMetric(metricDefinition);
-
-                // Put the original metrics definition into the metric.
-                metric.name = metricDefinition.name;
-                metric.definition = metricDefinition;
-                metrics.add(metric);
-            } catch (Exception e) {
-                log.error("Exception getting Splunk metric: " + metricDefinition.name, e);
-            }
-        }
-
-        return metrics;
     }
 
     @Override

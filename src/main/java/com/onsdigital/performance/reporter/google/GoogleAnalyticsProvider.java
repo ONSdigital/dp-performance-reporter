@@ -11,8 +11,9 @@ import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.MetricProvider;
-import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
-import com.onsdigital.performance.reporter.model.*;
+import com.onsdigital.performance.reporter.model.Frequency;
+import com.onsdigital.performance.reporter.model.Metric;
+import com.onsdigital.performance.reporter.model.MetricDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class GoogleAnalyticsProvider implements MetricsProvider, MetricProvider {
+public class GoogleAnalyticsProvider implements MetricProvider {
 
     private static Log log = LogFactory.getLog(GoogleAnalyticsProvider.class);
 
@@ -40,44 +41,17 @@ public class GoogleAnalyticsProvider implements MetricsProvider, MetricProvider 
         tableId = "ga:" + Configuration.getGoogleProfileId();
     }
 
-    /**
-     * Produce metrics from google analytics based on the JSON configuration file.
-     *
-     * @return - the metrics gathered from Google Analytics
-     */
-    @Override
-    public Metrics getMetrics(MetricDefinitions metricDefinitions) {
-
-        Metrics metrics = new Metrics();
-
-        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-
-            log.debug("Running Google Analytics report: " + metricDefinition.name);
-
-            try {
-                Metric metric;
-
-                if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
-                    metric = getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
-                } else {
-                    metric = getMetric(metricDefinition);
-                }
-
-                metric.name = metricDefinition.name;
-                metric.definition = metricDefinition;
-                metrics.add(metric);
-
-            } catch (IOException e) {
-                log.error("Exception getting Google Analytics metric: " + metricDefinition.name, e);
-            }
-        }
-
-        return metrics;
-    }
-
     @Override
     public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
 
+        if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
+            return getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
+        } else {
+            return getAnalyticsMetric(metricDefinition);
+        }
+    }
+
+    private Metric getAnalyticsMetric(MetricDefinition metricDefinition) throws IOException {
         String metrics = metricDefinition.query.get("metrics");
         String startDate = metricDefinition.query.get("start-date");
         String endDate = metricDefinition.query.get("end-date");

@@ -2,11 +2,8 @@ package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.MetricProvider;
-import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
-import com.onsdigital.performance.reporter.model.MetricDefinitions;
-import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
 import com.onsdigital.performance.reporter.pingdom.model.SummaryStatus;
@@ -21,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class PingdomResponseTimeProvider implements MetricsProvider, MetricProvider {
+public class PingdomResponseTimeProvider implements MetricProvider {
 
     private static Log log = LogFactory.getLog(PingdomResponseTimeProvider.class);
 
@@ -35,28 +32,6 @@ public class PingdomResponseTimeProvider implements MetricsProvider, MetricProvi
 
         pingdomClient = new PingdomClient(username, password, applicationKey);
     }
-
-    @Override
-    public Metrics getMetrics(MetricDefinitions metricDefinitions) {
-        Metrics metrics = new Metrics();
-
-        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-
-            log.debug("Running Pingdom report: " + metricDefinition.name);
-
-            try {
-                Metric metric = getMetric(metricDefinition);
-                metric.name = metricDefinition.name;
-                metric.definition = metricDefinition;
-                metrics.add(metric);
-            } catch (IOException e) {
-                log.error("Exception getting Pingdom metric: " + metricDefinition.name, e);
-            }
-        }
-
-        return metrics;
-    }
-
 
     @Override
     public Metric getMetric(MetricDefinition metricDefinition) throws IOException {

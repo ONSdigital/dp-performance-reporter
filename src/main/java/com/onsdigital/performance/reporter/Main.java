@@ -2,9 +2,8 @@ package com.onsdigital.performance.reporter;
 
 import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
-import com.onsdigital.performance.reporter.interfaces.MetricsProvider;
-import com.onsdigital.performance.reporter.model.MetricDefinitions;
-import com.onsdigital.performance.reporter.model.Metrics;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
+import com.onsdigital.performance.reporter.model.*;
 import com.onsdigital.performance.reporter.pingdom.PingdomResponseTimeProvider;
 import com.onsdigital.performance.reporter.s3.s3FileUploader;
 import com.onsdigital.performance.reporter.splunk.SplunkMetricsProvider;
@@ -52,8 +51,27 @@ public class Main {
 
         try {
             MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");
-            MetricsProvider metricsProvider = new SplunkMetricsProvider();
-            Metrics metrics = metricsProvider.getMetrics(metricDefinitions);
+            MetricProvider metricProvider = new SplunkMetricsProvider();
+
+            // Read definitions of metrics to gather from JSON config file.
+            Metrics metrics = new Metrics();
+
+            for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
+
+                log.debug("Running Splunk query: " + metricDefinition.name);
+                Metric metric;
+                try {
+                    metric = metricProvider.getMetric(metricDefinition);
+
+                    // Put the original metrics definition into the metric.
+                    metric.name = metricDefinition.name;
+                    metric.definition = metricDefinition;
+                    metrics.add(metric);
+                } catch (Exception e) {
+                    log.error("Exception getting Splunk metric: " + metricDefinition.name, e);
+                }
+            }
+
             fileUploader.uploadJsonForObject(metrics, "metrics.json");
 
         } catch (Exception e) {
@@ -68,8 +86,23 @@ public class Main {
 
         try {
             MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
-            MetricsProvider responseTimeProvider = new PingdomResponseTimeProvider();
-            Metrics metrics = responseTimeProvider.getMetrics(metricDefinitions);
+            MetricProvider responseTimeProvider = new PingdomResponseTimeProvider();
+            Metrics metrics = new Metrics();
+
+            for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
+
+                log.debug("Running Pingdom report: " + metricDefinition.name);
+
+                try {
+                    Metric metric = responseTimeProvider.getMetric(metricDefinition);
+                    metric.name = metricDefinition.name;
+                    metric.definition = metricDefinition;
+                    metrics.add(metric);
+                } catch (IOException e) {
+                    log.error("Exception getting Pingdom metric: " + metricDefinition.name, e);
+                }
+            }
+
             fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,26 +114,36 @@ public class Main {
     private static void RunAnalyticsReport(FileUploader fileUploader) {
         log.debug("Gathering analytics data from Google.");
 
-        Metrics metrics;
         try {
-            MetricsProvider googleAnalyticsProvider = new GoogleAnalyticsProvider();
+            MetricProvider googleAnalyticsProvider = new GoogleAnalyticsProvider();
             MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
-            metrics = googleAnalyticsProvider.getMetrics(metricDefinitions);
 
-//            for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-//
-//                Metric metric;
-//
-//                if (metricDefinition.providerClass == null || metricDefinition.providerClass.isEmpty()) {
-//                    // use default analytics provider
-//                } else {
-//                    MetricProvider metricProvider = (MetricProvider) Class.forName(metricDefinition.providerClass).newInstance();
-//                    metric = metricProvider.getMetric(metricDefinition);
-//                    metric.name = metricDefinition.name;
-//                    metric.definition = metricDefinition;
-//                    metrics.add(metric);
-//                }
-//            }
+            Metrics metrics = new Metrics();
+
+            for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
+
+                log.debug("Running Google Analytics report: " + metricDefinition.name);
+
+                try {
+                    Metric metric;
+
+                    if (metricDefinition.providerClass == null || metricDefinition.providerClass.isEmpty()) {
+                        metric = googleAnalyticsProvider.getMetric(metricDefinition);
+                    } else {
+                        MetricProvider metricProvider = (MetricProvider) Class.forName(metricDefinition.providerClass).newInstance();
+                        metric = metricProvider.getMetric(metricDefinition);
+                    }
+
+                    if (metric != null) {
+                        metric.name = metricDefinition.name;
+                        metric.definition = metricDefinition;
+                        metrics.add(metric);
+                    }
+
+                } catch (IOException e) {
+                    log.error("Exception getting Google Analytics metric: " + metricDefinition.name, e);
+                }
+            }
 
             fileUploader.uploadJsonForObject(metrics, "analytics.json");
         } catch (Exception e) {
