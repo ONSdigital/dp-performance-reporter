@@ -65,13 +65,13 @@ public class GoogleAnalyticsProvider implements MetricProvider {
                 endDate,
                 metrics);
 
-        if (dimensions != null)
+        if (dimensions != null && dimensions.length() > 0)
             get.setDimensions(dimensions);
 
-        if (sort != null)
+        if (sort != null && sort.length() > 0)
             get.setSort(sort);
 
-        if (filters != null)
+        if (filters != null && filters.length() > 0)
             get.setFilters(filters);
 
         if (maxResults != null)
