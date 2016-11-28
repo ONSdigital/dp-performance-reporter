@@ -266,7 +266,7 @@
     },
     {
       "name": "dataset-page-downloads-daily-30-days",
-      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
       "frequency": "daily",
       "query": {
         "dimensions": "ga:date",
@@ -284,7 +284,7 @@
     },
     {
       "name": "dataset-page-downloads-30-days",
-      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
       "frequency": "daily",
       "query": {
         "metrics": "ga:sessions",
@@ -301,7 +301,7 @@
     },
     {
       "name": "dataset-page-downloads-60-to-30-days",
-      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
       "frequency": "daily",
       "query": {
         "metrics": "ga:sessions",
