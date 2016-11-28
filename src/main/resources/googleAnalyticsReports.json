@@ -263,6 +263,58 @@
         "name": "Direct visits total (60 - 30 days)",
         "description": ""
       }
+    },
+    {
+      "name": "dataset-page-downloads-daily-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
+    },
+    {
+      "name": "dataset-page-downloads-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
+    },
+    {
+      "name": "dataset-page-downloads-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.FilterPercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
     }
   ]
 }

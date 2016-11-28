@@ -1,6 +1,7 @@
 package com.onsdigital.performance.reporter;
 
 import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
+import com.onsdigital.performance.reporter.interfaces.CompositeMetricProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.MetricProvider;
 import com.onsdigital.performance.reporter.model.*;
@@ -130,7 +131,9 @@ public class Main {
                     if (metricDefinition.providerClass == null || metricDefinition.providerClass.isEmpty()) {
                         metric = googleAnalyticsProvider.getMetric(metricDefinition);
                     } else {
-                        MetricProvider metricProvider = (MetricProvider) Class.forName(metricDefinition.providerClass).newInstance();
+                        // dynamically load the provider instance from the MetricDefinition config.
+                        CompositeMetricProvider metricProvider = (CompositeMetricProvider) Class.forName(metricDefinition.providerClass).newInstance();
+                        metricProvider.setMetricProvider(googleAnalyticsProvider);
                         metric = metricProvider.getMetric(metricDefinition);
                     }
 
