@@ -145,4 +145,36 @@ public class PercentageComparisonTest {
         Assert.assertEquals("10.0", firstRowOfValues.get(1)); // 20 as a percent of 200 = 10%
         Assert.assertEquals("5.0", firstRowOfValues.get(2)); // 40 as a percent of 800 = 5%
     }
+
+    @Test
+    public void getMetricReturnsExpectedColumns() throws Exception {
+
+        // Given two stubbed responses from a metrics provider with column headers.
+        Metric metric1 = new Metric();
+        metric1.values = new ArrayList<>();
+        metric1.columns = Arrays.asList("date", "value1", "value2");
+        metric1.values.add(Arrays.asList("2016-02", "20", "40"));
+
+        Metric metric2 = new Metric();
+        metric2.values = new ArrayList<>();
+        metric2.values.add(Arrays.asList("2016-02", "200", "800"));
+
+        MetricProvider dummyMetricProvider = new DummyMetricProvider(metric1, metric2);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+        metricDefinition.query = new HashMap<>();
+
+        // When getMetric is called
+        Metric resultMetric = percentageComparison.getMetric(metricDefinition);
+
+        // Then the expected response is returned with column headers
+        Assert.assertEquals("date", resultMetric.columns.get(0));
+        Assert.assertEquals("value1", resultMetric.columns.get(1));
+        Assert.assertEquals("value2", resultMetric.columns.get(2));
+    }
 }

@@ -51,8 +51,8 @@ public class PercentageComparison implements CompositeMetricProvider {
         Metric metric = new Metric();
         metric.values = new ArrayList<>();
 
-        if (metric.columns != null)
-        metric.columns = metricA.columns; // copy column headers
+        if (metricA != null && metricA.columns != null)
+            metric.columns = metricA.columns; // copy column headers
 
         metric.values = calculateMetricValues(metricA, metricB);
 
