@@ -83,9 +83,15 @@ public class PercentageComparison implements CompositeMetricProvider {
      */
     private static ArrayList<String> calculateResultRowValues(List<String> rowA, List<String> rowB) {
         ArrayList<String> newRow = new ArrayList<>();
-        newRow.add(rowA.get(0)); // add the date label in the first column.
 
-        for (int columnIndex = 1; columnIndex < rowA.size(); columnIndex++) {
+        int startIndex = 0;
+
+        if (rowA.size() > 1) {// if the row is longer than one value assume the first field is a label.
+            newRow.add(rowA.get(0)); // add the date label in the first column.
+            startIndex = 1;
+        }
+
+        for (int columnIndex = startIndex; columnIndex < rowA.size(); columnIndex++) {
             String calculatedValue;
             try {
 
