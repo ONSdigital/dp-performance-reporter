@@ -1,5 +1,7 @@
 package com.onsdigital.performance.reporter.google;
 
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
+import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,92 +15,110 @@ public class PercentageComparisonTest {
 
     private PercentageComparison percentageComparison = new PercentageComparison();
 
-    @Test
-    public void calculateResultRowValuesReturnsCorrectValues() throws Exception {
-
-        // Given two input rows with a label in the first column and numbers in the others
-        List<String> rowA = Arrays.asList("2016-02", "20", "40");
-        List<String> rowB = Arrays.asList("2016-02", "200", "800");
-
-        // When the calculateResultRowValues function is called
-        ArrayList<String> result = percentageComparison.calculateResultRowValues(rowA, rowB);
-
-        // Then the returned row has the correctly calculated values
-        Assert.assertEquals("2016-02", result.get(0));
-        Assert.assertEquals("10.0", result.get(1)); // 20 as a percent of 200 = 10%
-        Assert.assertEquals("5.0", result.get(2)); // 40 as a percent of 800 = 5%
-    }
-
-    @Test
-    public void calculateResultRowValuesReturnsOriginalValueIfNotANumber() throws Exception {
-
-        // Given two input rows, with values that are not valid numbers
-        List<String> inputRow = Arrays.asList("2016", "this is clearly not a number");
-
-        // When the calculateResultRowValues function is called
-        ArrayList<String> resultRow = percentageComparison.calculateResultRowValues(inputRow, inputRow);
-
-        // Then the result row has the original values in it.
-        Assert.assertEquals(inputRow.get(0), resultRow.get(0));
-        Assert.assertEquals(inputRow.get(1), resultRow.get(1));
-    }
-
-    @Test
-    public void calculatePercentageReturnsExpectedPercentage() throws Exception {
-        
-        // Given input values of 40 and 200
-        int a = 40;
-        int b = 200;
-
-        // When the calculatePercentage function is called
-        double result = PercentageComparison.calculatePercentage(a, b);
-
-        // Then the result is 20 - the correct percentage value
-        double expected = 20; // 40 as a percentage of 200 = 20
-        Assert.assertEquals(expected, result, 0);
+    @Test(expected = IllegalArgumentException.class)
+    public void getMetricShouldThrowExceptionIfSourceDefinitionIsNull() throws Exception {
+        percentageComparison.getMetric(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createDefinitionWithFilterShouldThrowExceptionIfSourceDefinitionIsNull() throws Exception {
-        percentageComparison.createDefinitionUsingFilter("", null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createDefinitionWithFilterShouldThrowExceptionIfMetadataIsNull() throws Exception {
+    public void getMetricShouldThrowExceptionIfMetadataIsNull() throws Exception {
         MetricDefinition sourceDefinition = new MetricDefinition();
-        percentageComparison.createDefinitionUsingFilter("", sourceDefinition);
+        percentageComparison.getMetric(sourceDefinition);
     }
 
-    @Test
-    public void createDefinitionWithDimensionShouldCopyQuery() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void getMetricShouldThrowExceptionIfMetadataDoesNotContainComparisonFieldValue() throws Exception {
 
-        // Given a metric definition with a query
+        // Given a MetricDefinition without specifying a ComparisonField in the metadata.
         MetricDefinition sourceDefinition = new MetricDefinition();
         sourceDefinition.meta = new HashMap<>();
-        sourceDefinition.meta.put("filterA", "this is a filter");
-        sourceDefinition.query = new HashMap<>();
-        sourceDefinition.query.put("testee", "woo");
 
-        // When the createDefinitionUsingFilter function is called
-        MetricDefinition result = percentageComparison.createDefinitionUsingFilter("filterA", sourceDefinition);
+        // When getMetric is called
+        percentageComparison.getMetric(sourceDefinition);
 
-        // Then the query in the result contains the values that were in the original definitions query.
-        Assert.assertEquals(result.query.get("testee"), "woo");
-        Assert.assertEquals(result.query.get("filters"), "this is a filter");
+        // Then an IllegalArgumentException is thrown.
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createDefinitionWithoutFilterShouldThrow() throws Exception {
-
-        // Given a metric definition with a query, but not a filter
+    public void getMetricShouldThrowExceptionIfMetadataDoesNotContainComparisonFieldA() throws Exception {
         MetricDefinition sourceDefinition = new MetricDefinition();
-        sourceDefinition.query = new HashMap<>();
         sourceDefinition.meta = new HashMap<>();
-        sourceDefinition.query.put("testee", "woo");
+        sourceDefinition.meta.put("comparisonField", "filters");
+        percentageComparison.getMetric(sourceDefinition);
+    }
+
+    @Test
+    public void getMetricWithNullQueryShouldStillExecute() throws Exception {
+
+        // Given a metric definition with a null query.
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+
+        percentageComparison.setMetricProvider(new DummyMetricProvider(null, null));
 
         // When the createDefinitionUsingFilter function is called
-        MetricDefinition result = percentageComparison.createDefinitionUsingFilter("filterA", sourceDefinition);
+        percentageComparison.getMetric(metricDefinition);
 
         // Then an exception is thrown because no filter was found.
+    }
+
+    @Test
+    public void getMetricShouldUseTheSourceQuery() throws Exception {
+
+        // Given a MetricDefinition that defines a query.
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+        metricDefinition.query = new HashMap<>();
+        metricDefinition.query.put("dimension", "date");
+
+        // When getMetric is called having set the DummyMetricProvider
+        DummyMetricProvider dummyMetricProvider = new DummyMetricProvider(null, null);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+        percentageComparison.getMetric(metricDefinition);
+
+        // Then the query sent to the MetricProvider should contain the query from the input MetricProvider.
+        Assert.assertTrue(dummyMetricProvider.getMetricDefinition1().query.containsKey("dimension"));
+        Assert.assertEquals("date", dummyMetricProvider.getMetricDefinition1().query.get("dimension"));
+
+        Assert.assertTrue(dummyMetricProvider.getMetricDefinition2().query.containsKey("dimension"));
+        Assert.assertEquals("date", dummyMetricProvider.getMetricDefinition2().query.get("dimension"));
+    }
+
+    @Test
+    public void getMetricReturnsExpectedValue() throws Exception {
+
+        // Given two stubbed responses from a metrics provider
+        Metric metric1 = new Metric();
+        metric1.values = new ArrayList<>();
+        metric1.values.add(Arrays.asList("2016-02", "20", "40"));
+
+        Metric metric2 = new Metric();
+        metric2.values = new ArrayList<>();
+        metric2.values.add(Arrays.asList("2016-02", "200", "800"));
+
+        MetricProvider dummyMetricProvider = new DummyMetricProvider(metric1, metric2);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+        metricDefinition.query = new HashMap<>();
+
+        // When getMetric is called
+        Metric resultMetric = percentageComparison.getMetric(metricDefinition);
+
+        // Then the expected response is returned with calculated percentages.
+        List<String> firstRowOfValues = resultMetric.values.get(0);
+        Assert.assertEquals("2016-02", firstRowOfValues.get(0));
+        Assert.assertEquals("10.0", firstRowOfValues.get(1)); // 20 as a percent of 200 = 10%
+        Assert.assertEquals("5.0", firstRowOfValues.get(2)); // 40 as a percent of 800 = 5%
     }
 }
