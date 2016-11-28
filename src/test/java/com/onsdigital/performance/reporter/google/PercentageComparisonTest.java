@@ -91,6 +91,30 @@ public class PercentageComparisonTest {
     }
 
     @Test
+    public void getMetricShouldUseTheSourceMeta() throws Exception {
+
+        // Given a MetricDefinition that defines a comparison filter in the meta map
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters for request A");
+        metricDefinition.meta.put("comparisonValueB", "filters for request B");
+        metricDefinition.query = new HashMap<>();
+
+        // When getMetric is called having set the DummyMetricProvider
+        DummyMetricProvider dummyMetricProvider = new DummyMetricProvider(null, null);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+        percentageComparison.getMetric(metricDefinition);
+
+        // Then the query sent to the MetricProvider should contain the values defines in the meta section for the comparison.
+        Assert.assertTrue(dummyMetricProvider.getMetricDefinition1().query.containsKey("filters"));
+        Assert.assertEquals("filters for request A", dummyMetricProvider.getMetricDefinition1().query.get("filters"));
+
+        Assert.assertTrue(dummyMetricProvider.getMetricDefinition2().query.containsKey("filters"));
+        Assert.assertEquals("filters for request B", dummyMetricProvider.getMetricDefinition2().query.get("filters"));
+    }
+
+    @Test
     public void getMetricReturnsExpectedValue() throws Exception {
 
         // Given two stubbed responses from a metrics provider

@@ -134,7 +134,7 @@ public class PercentageComparison implements CompositeMetricProvider {
             }
         }
 
-        result.query.put(ComparisonFieldKey, sourceDefinition.meta.get(filterKey));
+        result.query.put(sourceDefinition.meta.get(ComparisonFieldKey), sourceDefinition.meta.get(filterKey));
         return result;
     }
 
