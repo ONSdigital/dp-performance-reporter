@@ -315,6 +315,58 @@
         "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
         "comparisonValueB": "ga:pagePath=~/datasets/*"
       }
+    },
+    {
+      "name": "users-following-external-links-daily-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
+    },
+    {
+      "name": "users-following-external-links-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
+    },
+    {
+      "name": "users-following-external-links-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
     }
   ]
 }
