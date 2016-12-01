@@ -30,8 +30,6 @@ public class ApiSample {
 
     private static final String APPLICATION_NAME = "Hello Analytics";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-//    private static final String KEY_FILE_LOCATION = "/Users/carlhembrough/.google/credentials.json";
-//    private static final String SERVICE_ACCOUNT_EMAIL = "performance-dashboard@tea-app-1304.iam.gserviceaccount.com";
 
     public static void main(String[] args) {
         try {
@@ -79,62 +77,15 @@ public class ApiSample {
 
     private static GaData executeDataQuery(Analytics analytics, String tableId) throws IOException {
 
-
-//        return analytics.data().ga().get(tableId, // Table Id.
-//                "today", // Start date. // 2016-08-01
-//                "today", // End date. 2016-08-08
-//                "ga:users") // Metrics.
-//                .setDimensions("ga:date,ga:hour") // ga:source,ga:keyword
-////                .setSort("-ga:visits")
-////                .setFilters("ga:medium==organic")
-//                .setMaxResults(25)
-//                .execute();
-
-        // outbound links
-//        return analytics.data().ga().get(tableId, // Table Id.
-//                "1daysAgo", // Start date. // 2016-08-01
-//                "today", // End date. 2016-08-08
-//                //"ga:sessions") // Metrics.
-//                "ga:totalEvents") // Metrics.
-//                .setDimensions("ga:eventCategory") // ga:source,ga:keyword
-//                //.setFilters("ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip")
-//                .setFilters("ga:eventCategory==outbound")
-//                .setMaxResults(25)
-//                .execute();
-
+        // see all event types
         return analytics.data().ga().get(tableId, // Table Id.
                 "1daysAgo", // Start date. // 2016-08-01
                 "today", // End date. 2016-08-08
                 "ga:sessions") // Metrics.
-                .setDimensions("") // ga:source,ga:keyword
-                .setFilters("ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip")
-                //.setFilters("")
-                .setMaxResults(25)
+                .setDimensions("ga:pagePath") // ga:source,ga:keyword
+                .setFilters("ga:pagePath=~/bulletins/*")
                 .execute();
-
-        // see all event types
-//        return analytics.data().ga().get(tableId, // Table Id.
-//                "1daysAgo", // Start date. // 2016-08-01
-//                "today", // End date. 2016-08-08
-//                "ga:sessions") // Metrics.
-//                .setDimensions("ga:pagePath") // ga:source,ga:keyword
-//                .setFilters("ga:pagePath=~/bulletins/*")
-//                //.setSegment("pageType")
-//                .setMaxResults(25)
-//                .execute();
-
     }
-//
-//    private static Analytics initializeAnalytics() throws Exception {
-//
-//        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-//        GoogleCredential credential = GoogleCredential.getApplicationDefault()
-//                .createScoped(Arrays.asList(AnalyticsScopes.ANALYTICS_READONLY));
-//
-//        // Construct the Analytics service object.
-//        return new Analytics.Builder(httpTransport, JSON_FACTORY, credential)
-//                .setApplicationName(APPLICATION_NAME).build();
-//    }
 
     private static Analytics initializeAnalytics() throws Exception {
 
