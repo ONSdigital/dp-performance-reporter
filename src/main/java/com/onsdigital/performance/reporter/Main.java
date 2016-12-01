@@ -21,6 +21,13 @@ public class Main {
     private static Log log = LogFactory.getLog(Main.class);
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
+    private static final String splunkReportsInputFile = "splunkReports.json";
+    private static final String splunkReportsOutputFile = "metrics.json";
+    private static final String pingdomReportsInputFile = "pingdomReports.json";
+    private static final String pingdomReportsOutputFile = "responsetimes.json";
+    private static final String googleAnalyticsReportInputFile = "googleAnalyticsReports.json";
+    private static final String googleAnalyticsReportOutputFile = "analytics.json";
+
     public static void main(String[] args) throws Exception {
         try {
             while (true) {
@@ -51,7 +58,7 @@ public class Main {
         log.debug("Gathering metrics from Splunk.");
 
         try {
-            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("splunkReports.json");
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions(splunkReportsInputFile);
             MetricProvider metricProvider = new SplunkMetricsProvider();
 
             // Read definitions of metrics to gather from JSON config file.
@@ -73,7 +80,7 @@ public class Main {
                 }
             }
 
-            fileUploader.uploadJsonForObject(metrics, "metrics.json");
+            fileUploader.uploadJsonForObject(metrics, splunkReportsOutputFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +93,7 @@ public class Main {
         log.debug("Gathering response times from Pingdom.");
 
         try {
-            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions(pingdomReportsInputFile);
             MetricProvider responseTimeProvider = new PingdomResponseTimeProvider();
             Metrics metrics = new Metrics();
 
@@ -104,7 +111,7 @@ public class Main {
                 }
             }
 
-            fileUploader.uploadJsonForObject(metrics, "responsetimes.json");
+            fileUploader.uploadJsonForObject(metrics, pingdomReportsOutputFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,7 +124,7 @@ public class Main {
 
         try {
             MetricProvider googleAnalyticsProvider = new GoogleAnalyticsProvider();
-            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
+            MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions(googleAnalyticsReportInputFile);
 
             Metrics metrics = new Metrics();
 
@@ -148,7 +155,7 @@ public class Main {
                 }
             }
 
-            fileUploader.uploadJsonForObject(metrics, "analytics.json");
+            fileUploader.uploadJsonForObject(metrics, googleAnalyticsReportOutputFile);
         } catch (Exception e) {
             log.error("Unexpected exception thrown when running analytics report.", e);
         }
