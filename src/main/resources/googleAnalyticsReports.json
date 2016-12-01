@@ -367,6 +367,58 @@
         "comparisonValueA": "ga:eventCategory==outbound",
         "comparisonValueB": ""
       }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
     }
   ]
 }
