@@ -83,7 +83,7 @@ public class Main {
             fileUploader.uploadJsonForObject(metrics, splunkReportsOutputFile);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
         log.debug("Finished generating metrics report.");
