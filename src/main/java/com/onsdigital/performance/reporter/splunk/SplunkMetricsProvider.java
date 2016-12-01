@@ -89,7 +89,7 @@ public class SplunkMetricsProvider implements MetricProvider {
                 metric = MapResultToMetric(result);
             }
         } catch (InterruptedException | TimeoutException e) {
-            e.printStackTrace();
+            log.error("Exception running query against Splunk.", e);
         }
 
         return metric;

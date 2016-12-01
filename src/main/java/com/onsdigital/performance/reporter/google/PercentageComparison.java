@@ -30,7 +30,7 @@ public class PercentageComparison implements CompositeMetricProvider {
     private MetricProvider metricProvider;
 
     @Override
-    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException, MetricQueryException {
 
         Metric metricA = getInputMetric(metricDefinition, "comparisonValueA");
         Metric metricB = getInputMetric(metricDefinition, "comparisonValueB");
@@ -38,7 +38,7 @@ public class PercentageComparison implements CompositeMetricProvider {
         return createOutputMetric(metricA, metricB);
     }
 
-    private Metric getInputMetric(MetricDefinition metricDefinition, String dimension) throws IOException {
+    private Metric getInputMetric(MetricDefinition metricDefinition, String dimension) throws IOException, MetricQueryException {
         // Take the given metric definition and copy the query from it into two separate definitions.
         MetricDefinition request = createDefinitionUsingFilter(metricDefinition, dimension);
 
@@ -46,7 +46,7 @@ public class PercentageComparison implements CompositeMetricProvider {
         return metricProvider.getMetric(request);
     }
 
-    private static Metric createOutputMetric(Metric metricA, Metric metricB) {
+    private static Metric createOutputMetric(Metric metricA, Metric metricB) throws MetricQueryException {
         // Create the result metric
         Metric metric = new Metric();
         metric.values = new ArrayList<>();
@@ -59,13 +59,20 @@ public class PercentageComparison implements CompositeMetricProvider {
         return metric;
     }
 
-    private static List<List<String>> calculateMetricValues(Metric metricA, Metric metricB) {
+    private static List<List<String>> calculateMetricValues(Metric metricA, Metric metricB) throws MetricQueryException {
         List<List<String>> values = new ArrayList<>();
 
         if (metricA != null && metricB != null) {
+
+            if (metricA.values.size() != metricB.values.size())
+                throw new MetricQueryException("The two metrics have a different number of rows.");
+
             for (int rowIndex = 0; rowIndex < metricA.values.size(); rowIndex++) {
                 List<String> rowA = metricA.values.get(rowIndex);
                 List<String> rowB = metricB.values.get(rowIndex);
+
+                if (rowA.size() != rowB.size())
+                    throw new MetricQueryException("The two metrics have a different number of rows.");
 
                 ArrayList<String> newRow = calculateResultRowValues(rowA, rowB);
                 values.add(newRow);

@@ -114,6 +114,63 @@ public class PercentageComparisonTest {
         Assert.assertEquals("filters for request B", dummyMetricProvider.getMetricDefinition2().query.get("filters"));
     }
 
+    @Test(expected = MetricQueryException.class)
+    public void getMetricThrowsExceptionWhenRowLengthsDiffer() throws Exception {
+
+        // Given two stubbed responses from a metrics provider - one with two rows, and the other with only one.
+        Metric metric1 = new Metric();
+        metric1.values = new ArrayList<>();
+        metric1.values.add(Arrays.asList("2016-02", "20", "40"));
+        metric1.values.add(Arrays.asList("2016-02", "20", "40"));
+
+        Metric metric2 = new Metric();
+        metric2.values = new ArrayList<>();
+        metric2.values.add(Arrays.asList("2016-02", "200", "800"));
+
+        MetricProvider dummyMetricProvider = new DummyMetricProvider(metric1, metric2);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+        metricDefinition.query = new HashMap<>();
+
+        // When getMetric is called
+        Metric resultMetric = percentageComparison.getMetric(metricDefinition);
+
+        // Then the expected exception is thrown.
+    }
+
+    @Test(expected = MetricQueryException.class)
+    public void getMetricThrowsExceptionWhenColumnLengthsDiffer() throws Exception {
+
+        // Given two stubbed responses from a metrics provider - with differing column lengths.
+        Metric metric1 = new Metric();
+        metric1.values = new ArrayList<>();
+        metric1.values.add(Arrays.asList("2016-02", "20", "40"));
+
+        Metric metric2 = new Metric();
+        metric2.values = new ArrayList<>();
+        metric2.values.add(Arrays.asList("2016-02", "200"));
+
+        MetricProvider dummyMetricProvider = new DummyMetricProvider(metric1, metric2);
+        percentageComparison.setMetricProvider(dummyMetricProvider);
+
+        MetricDefinition metricDefinition = new MetricDefinition();
+        metricDefinition.meta = new HashMap<>();
+        metricDefinition.meta.put("comparisonField", "filters");
+        metricDefinition.meta.put("comparisonValueA", "filters");
+        metricDefinition.meta.put("comparisonValueB", "filters");
+        metricDefinition.query = new HashMap<>();
+
+        // When getMetric is called
+        Metric resultMetric = percentageComparison.getMetric(metricDefinition);
+
+        // Then the expected exception is thrown.
+    }
+
     @Test
     public void getMetricReturnsExpectedValue() throws Exception {
 
