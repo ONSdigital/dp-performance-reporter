@@ -1,6 +1,7 @@
 package com.onsdigital.performance.reporter;
 
 import com.onsdigital.performance.reporter.google.GoogleAnalyticsProvider;
+import com.onsdigital.performance.reporter.google.MetricQueryException;
 import com.onsdigital.performance.reporter.interfaces.CompositeMetricProvider;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
 import com.onsdigital.performance.reporter.interfaces.MetricProvider;
@@ -83,7 +84,7 @@ public class Main {
             fileUploader.uploadJsonForObject(metrics, splunkReportsOutputFile);
 
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception running query against Splunk", e);
         }
 
         log.debug("Finished generating metrics report.");
@@ -106,14 +107,14 @@ public class Main {
                     metric.name = metricDefinition.name;
                     metric.definition = metricDefinition;
                     metrics.add(metric);
-                } catch (IOException e) {
+                } catch (IOException | MetricQueryException e) {
                     log.error("Exception getting Pingdom metric: " + metricDefinition.name, e);
                 }
             }
 
             fileUploader.uploadJsonForObject(metrics, pingdomReportsOutputFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Exception running Pingdom report.");
         }
 
         log.debug("Finished generating response times report.");
