@@ -8,9 +8,15 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.*;
+import com.onsdigital.performance.reporter.Configuration;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +30,12 @@ public class ApiSample {
 
     private static final String APPLICATION_NAME = "Hello Analytics";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-//    private static final String KEY_FILE_LOCATION = "/Users/carlhembrough/.google/credentials.json";
-//    private static final String SERVICE_ACCOUNT_EMAIL = "performance-dashboard@tea-app-1304.iam.gserviceaccount.com";
 
     public static void main(String[] args) {
         try {
             Analytics analytics = initializeAnalytics();
 
-            String profileId = getFirstProfileId(analytics);
+            String profileId = Configuration.getGoogleProfileId();  // getFirstProfileId(analytics);
 
             System.out.println("First Profile Id: " + profileId);
             printResults(getResults(analytics, profileId));
@@ -73,29 +77,45 @@ public class ApiSample {
 
     private static GaData executeDataQuery(Analytics analytics, String tableId) throws IOException {
 
-
+        // see all event types
         return analytics.data().ga().get(tableId, // Table Id.
-                "today", // Start date. // 2016-08-01
+                "1daysAgo", // Start date. // 2016-08-01
                 "today", // End date. 2016-08-08
-                "ga:users") // Metrics.
-                .setDimensions("ga:date,ga:hour") // ga:source,ga:keyword
-//                .setSort("-ga:visits")
-//                .setFilters("ga:medium==organic")
-                .setMaxResults(25)
+                "ga:sessions") // Metrics.
+                .setDimensions("ga:pagePath") // ga:source,ga:keyword
+                .setFilters("ga:pagePath=~/bulletins/*")
                 .execute();
     }
 
     private static Analytics initializeAnalytics() throws Exception {
 
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        GoogleCredential credential = GoogleCredential.getApplicationDefault()
-                .createScoped(Arrays.asList(AnalyticsScopes.ANALYTICS_READONLY));
+        PrivateKey privateKey = parsePrivateKey(Configuration.getGooglePrivateKey());
 
-        // Construct the Analytics service object.
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setServiceAccountScopes(Arrays.asList(AnalyticsScopes.ANALYTICS_READONLY))
+                .setServiceAccountPrivateKey(privateKey)
+                .setServiceAccountId(Configuration.getGoogleAccountId())
+                .setJsonFactory(JSON_FACTORY)
+                .setTransport(httpTransport)
+                .build();
+
         return new Analytics.Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME).build();
     }
 
+    private static PrivateKey parsePrivateKey(String key) throws GeneralSecurityException {
+        key = key.replace("-----BEGIN PRIVATE KEY-----\\n", "");
+        key = key.replace("-----END PRIVATE KEY-----", "");
+        key = key.replace("\\n", "");
+
+        byte[] decoded = Base64.getDecoder().decode(key);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+
+        return privateKey;
+    }
 
     private static String getFirstProfileId(Analytics analytics) throws IOException {
         // Get the first view (profile) ID for the authorized user.
