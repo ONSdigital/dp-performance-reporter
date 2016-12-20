@@ -10,13 +10,14 @@ import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.RealtimeData;
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.model.*;
-import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
+import com.onsdigital.performance.reporter.model.Frequency;
+import com.onsdigital.performance.reporter.model.Metric;
+import com.onsdigital.performance.reporter.model.MetricDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class GoogleAnalyticsProvider {
+public class GoogleAnalyticsProvider implements MetricProvider {
 
     private static Log log = LogFactory.getLog(GoogleAnalyticsProvider.class);
 
@@ -35,39 +36,22 @@ public class GoogleAnalyticsProvider {
     private static Analytics analytics;
     private static String tableId;
 
-    public GoogleAnalyticsProvider() throws Exception {
+    public GoogleAnalyticsProvider() throws GeneralSecurityException, IOException {
         analytics = initializeAnalytics();
         tableId = "ga:" + Configuration.getGoogleProfileId();
     }
 
-    public Metrics getAnalytics() throws IOException, URISyntaxException {
+    @Override
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
 
-        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("googleAnalyticsReports.json");
-
-        Metrics metrics = new Metrics();
-
-        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-
-            log.debug("Running Google Analytics report: " + metricDefinition.name);
-            Metric metric;
-
-            if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
-                metric = getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
-            } else {
-                metric = getMetric(metricDefinition);
-            }
-
-            metric.name = metricDefinition.name;
-            metric.definition = metricDefinition;
-
-            metrics.add(metric);
+        if (metricDefinition.frequency != null && metricDefinition.frequency.equals(Frequency.realtime)) {
+            return getRealTimeMetric(metricDefinition); // Google has a separate API for realtime data.
+        } else {
+            return getAnalyticsMetric(metricDefinition);
         }
-
-        return metrics;
     }
 
-    private Metric getMetric(MetricDefinition metricDefinition) throws IOException {
-
+    private Metric getAnalyticsMetric(MetricDefinition metricDefinition) throws IOException {
         String metrics = metricDefinition.query.get("metrics");
         String startDate = metricDefinition.query.get("start-date");
         String endDate = metricDefinition.query.get("end-date");
@@ -81,20 +65,19 @@ public class GoogleAnalyticsProvider {
                 endDate,
                 metrics);
 
-        if (dimensions != null)
+        if (dimensions != null && dimensions.length() > 0)
             get.setDimensions(dimensions);
 
-        if (sort != null)
+        if (sort != null && sort.length() > 0)
             get.setSort(sort);
 
-        if (filters != null)
+        if (filters != null && filters.length() > 0)
             get.setFilters(filters);
 
         if (maxResults != null)
             get.setMaxResults(Integer.parseInt(maxResults));
 
         GaData data = get.execute();
-
         return mapDataToMetric(data);
     }
 
@@ -117,7 +100,12 @@ public class GoogleAnalyticsProvider {
     }
 
     static Metric mapDataToMetric(GaData data) {
+
         Metric metric = new Metric();
+
+        if (data == null)
+            return metric;
+
         metric.columns = new ArrayList<>();
         for (GaData.ColumnHeaders columnHeaders : data.getColumnHeaders()) {
             metric.columns.add(columnHeaders.getName());
@@ -128,7 +116,7 @@ public class GoogleAnalyticsProvider {
         return metric;
     }
 
-    private static Analytics initializeAnalytics() throws Exception {
+    private static Analytics initializeAnalytics() throws GeneralSecurityException, IOException {
 
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         PrivateKey privateKey = parsePrivateKey(Configuration.getGooglePrivateKey());
@@ -153,9 +141,6 @@ public class GoogleAnalyticsProvider {
         byte[] decoded = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-
-        return privateKey;
+        return keyFactory.generatePrivate(keySpec);
     }
-
 }

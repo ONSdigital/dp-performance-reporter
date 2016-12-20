@@ -7,4 +7,5 @@ public class MetricDefinition {
     public Frequency frequency;
     public Map<String,String> query;
     public Map<String,String> meta;
+    public String providerClass;
 }

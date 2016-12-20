@@ -1,28 +1,24 @@
 package com.onsdigital.performance.reporter.pingdom;
 
 import com.onsdigital.performance.reporter.Configuration;
-import com.onsdigital.performance.reporter.interfaces.ResponseTimeProvider;
+import com.onsdigital.performance.reporter.interfaces.MetricProvider;
 import com.onsdigital.performance.reporter.model.Metric;
 import com.onsdigital.performance.reporter.model.MetricDefinition;
-import com.onsdigital.performance.reporter.model.MetricDefinitions;
-import com.onsdigital.performance.reporter.model.Metrics;
 import com.onsdigital.performance.reporter.pingdom.model.PingdomReportType;
 import com.onsdigital.performance.reporter.pingdom.model.Summary;
 import com.onsdigital.performance.reporter.pingdom.model.SummaryStatus;
 import com.onsdigital.performance.reporter.util.DateParser;
-import com.onsdigital.performance.reporter.util.MetricDefinitionsReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class PingdomResponseTimeProvider implements ResponseTimeProvider {
+public class PingdomResponseTimeProvider implements MetricProvider {
 
     private static Log log = LogFactory.getLog(PingdomResponseTimeProvider.class);
 
@@ -37,36 +33,22 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
         pingdomClient = new PingdomClient(username, password, applicationKey);
     }
 
-    public Metrics getResponseTimes() throws IOException, ParseException, URISyntaxException {
-
-        MetricDefinitions metricDefinitions = MetricDefinitionsReader.instance().readMetricDefinitions("pingdomReports.json");
-        Metrics metrics = new Metrics();
-
-        for (MetricDefinition metricDefinition : metricDefinitions.metrics) {
-
-            log.debug("Running Pingdom report: " + metricDefinition.name);
-            Metric metric;
-
-            metric = getMetric(metricDefinition);
-
-            metric.name = metricDefinition.name;
-            metric.definition = metricDefinition;
-
-            metrics.add(metric);
-        }
-
-        return metrics;
-    }
-
-    private Metric getMetric(MetricDefinition metricDefinition) throws IOException, ParseException {
+    @Override
+    public Metric getMetric(MetricDefinition metricDefinition) throws IOException {
 
         Metric metric = new Metric();
 
         String start = metricDefinition.query.get("start-date");
         String end = metricDefinition.query.get("end-date");
 
-        Date startDate = DateParser.parseStartDate(start);
-        Date endDate = DateParser.parseEndDate(end);
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = DateParser.parseStartDate(start);
+            endDate = DateParser.parseEndDate(end);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         int checkId = Integer.parseInt(metricDefinition.query.get("check-id"));
         PingdomReportType type = PingdomReportType.valueOf(metricDefinition.query.get("type"));
@@ -83,8 +65,7 @@ public class PingdomResponseTimeProvider implements ResponseTimeProvider {
 
     private Metric getAverageSummaryMetric(int checkId, Date startDate, Date endDate) throws IOException {
         Summary summary = pingdomClient.getAverageSummary(checkId, startDate.getTime(), endDate.getTime());
-        Metric metric = mapPingdomSummaryToMetric(summary);
-        return metric;
+        return mapPingdomSummaryToMetric(summary);
     }
 
     static Metric mapPingdomSummaryToMetric(Summary summary) {

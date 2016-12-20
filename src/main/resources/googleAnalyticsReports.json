@@ -100,6 +100,325 @@
         "name": "Top Traffic Sources (30 Days)",
         "description": "Last 30 days' Traffic Sources, measured by visits, for all sites."
       }
+    },
+    {
+      "name": "search-refinement-percentage",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search refinement percentage (30 days)",
+        "description": "Last 30 days of search refinement percentages by day."
+      }
+    },
+    {
+      "name": "search-refinement-average-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search refinement average (30 days)",
+        "description": "Last 30 days of search refinement percentage as an average."
+      }
+    },
+    {
+      "name": "search-refinement-average-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:percentSearchRefinements",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Search refinement average (60 - 30 days)",
+        "description": "30 days prior to the last 30 days of search refinement average percentage"
+      }
+    },
+    {
+      "name": "search-exit-percentage",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:searchExitRate",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search refinement percentage (30 days)",
+        "description": "Last 30 days of Search exit percentages by day."
+      }
+    },
+    {
+      "name": "search-exit-average-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:searchExitRate",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Search exit average (30 days)",
+        "description": "Last 30 days of Search exit average percentage."
+      }
+    },
+    {
+      "name": "search-exit-average-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:searchExitRate",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Search exit average (60 - 30 days)",
+        "description": "30 days prior to the last 30 days of search exit average percentage"
+      }
+    },
+    {
+      "name": "visits-daily-30-days",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Visits daily (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "visits-total-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Visits total (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "visits-total-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Visits total (60 - 30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "direct-visits-daily-30-days",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Direct visits daily (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "direct-visits-total-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "Direct visits total (30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "direct-visits-total-60-to-30-days",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "filters": "ga:source==(direct)",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "Direct visits total (60 - 30 days)",
+        "description": ""
+      }
+    },
+    {
+      "name": "dataset-page-downloads-daily-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
+    },
+    {
+      "name": "dataset-page-downloads-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
+    },
+    {
+      "name": "dataset-page-downloads-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/datasets/*;ga:eventCategory==download-csdb,ga:eventCategory==download-csv,ga:eventCategory==download-supporting-file,ga:eventCategory==download-version,ga:eventCategory==download-xls,ga:eventCategory==download-xlsx,ga:eventCategory==download-zip",
+        "comparisonValueB": "ga:pagePath=~/datasets/*"
+      }
+    },
+    {
+      "name": "users-following-external-links-daily-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
+    },
+    {
+      "name": "users-following-external-links-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
+    },
+    {
+      "name": "users-following-external-links-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:eventCategory==outbound",
+        "comparisonValueB": ""
+      }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "dimensions": "ga:date",
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "30daysAgo",
+        "end-date": "yesterday"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
+    },
+    {
+      "name": "users-30-sec-on-bulletin-60-to-30-days",
+      "providerClass":"com.onsdigital.performance.reporter.google.PercentageComparison",
+      "frequency": "daily",
+      "query": {
+        "metrics": "ga:sessions",
+        "start-date": "60daysAgo",
+        "end-date": "30daysAgo"
+      },
+      "meta": {
+        "name": "",
+        "description": "",
+        "comparisonField":"filters",
+        "comparisonValueA": "ga:pagePath=~/bulletins/*;ga:eventCategory==TimeOnPage",
+        "comparisonValueB": "ga:pagePath=~/bulletins/*"
+      }
     }
   ]
 }
