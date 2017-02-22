@@ -1,0 +1,17 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: maven
+
+inputs:
+  - name: dp-performance-reporter
+
+outputs:
+  - name: target
+
+run:
+  path: dp-performance-reporter/ci/scripts/build.sh
