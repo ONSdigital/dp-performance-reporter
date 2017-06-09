@@ -1,0 +1,8 @@
+FROM onsdigital/java-component
+
+WORKDIR /usr/src
+
+ADD classes target/classes
+ADD dependency target/dependency
+
+CMD java -cp "target/dependency/*:target/classes/" com.onsdigital.performance.reporter.Main

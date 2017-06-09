@@ -1,5 +1,5 @@
 #!/bin/bash -eux
 
 pushd dp-performance-reporter
-  mvn clean surefire:test
+  mvn test
 popd
