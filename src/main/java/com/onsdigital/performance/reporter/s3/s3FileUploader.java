@@ -11,6 +11,7 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.google.gson.Gson;
 import com.onsdigital.performance.reporter.Configuration;
 import com.onsdigital.performance.reporter.interfaces.FileUploader;
+import com.onsdigital.performance.reporter.model.Metrics;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,13 +31,13 @@ public class s3FileUploader implements FileUploader {
     /**
      * Take an object, serialise to JSON, and upload
      *
-     * @param object
+     * @param metrics
      * @param name
      */
-    public void uploadJsonForObject(Object object, String name) {
+    public void uploadJsonForObject(Metrics metrics, String name) {
 
         log.debug("Uploading " + name + " to S3...");
-        String json = gson.toJson(object);
+        String json = gson.toJson(metrics);
 
         byte[] bytes = json.getBytes();
         InputStream input = new ByteArrayInputStream(bytes);
