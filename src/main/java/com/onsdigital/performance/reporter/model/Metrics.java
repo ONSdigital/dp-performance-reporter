@@ -1,6 +1,6 @@
 package com.onsdigital.performance.reporter.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Metrics extends ArrayList<Metric> {
+public class Metrics extends HashMap<String, Metric> {
 }
