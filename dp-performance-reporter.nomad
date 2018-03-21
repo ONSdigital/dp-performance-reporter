@@ -16,7 +16,8 @@ job "dp-performance-reporter" {
 
     constraint {
       attribute = "${node.class}"
-      value     = "publishing"
+      operator  = "regexp"
+      value     = "publishing.*"
     }
 
     task "dp-performance-reporter" {
