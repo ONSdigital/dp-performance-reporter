@@ -20,6 +20,13 @@ job "dp-performance-reporter" {
       value     = "publishing.*"
     }
 
+    restart {
+      attempts = 3
+      delay    = "15s"
+      interval = "1m"
+      mode     = "delay"
+    }
+
     task "dp-performance-reporter" {
       driver = "docker"
 
